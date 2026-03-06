@@ -1,3 +1,13 @@
+const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
+
+const sesClient = new SESClient({
+  region: process.env.SES_REGION || 'eu-west-1',
+  credentials: {
+    accessKeyId: process.env.SES_ACCESS_KEY,
+    secretAccessKey: process.env.SES_SECRET_KEY,
+  },
+});
+
 const generateEmailHTML = ({ profileName, profileDescription, overallScore, dimensions }) => {
   const getOverallColor = (score) => {
     if (score >= 4.2) return '#10B981';
@@ -130,16 +140,6 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.error('RESEND_API_KEY environment variable is not set');
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Email service not configured' }),
-    };
-  }
-
   let payload;
   try {
     payload = JSON.parse(event.body);
@@ -166,54 +166,34 @@ exports.handler = async (event) => {
 
   // Send result email to user
   try {
-    const userEmailRes = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
+    await sesClient.send(new SendEmailCommand({
+      Source: 'Ground by Y2Y <dorka@y2y.hu>',
+      Destination: { ToAddresses: [to] },
+      ReplyToAddresses: ['dorka@y2y.hu'],
+      Message: {
+        Subject: { Data: emailSubject, Charset: 'UTF-8' },
+        Body: { Html: { Data: htmlContent, Charset: 'UTF-8' } },
       },
-      body: JSON.stringify({
-        from: 'Ground by Y2Y <onboarding@resend.dev>',
-        to: [to],
-        reply_to: ['dorka@y2y.hu'],
-        subject: emailSubject,
-        html: htmlContent,
-      }),
-    });
-
-    if (!userEmailRes.ok) {
-      const errText = await userEmailRes.text();
-      console.error('Resend user email error:', errText);
-      return {
-        statusCode: 500,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'Failed to send email', detail: errText }),
-      };
-    }
+    }));
   } catch (err) {
-    console.error('Fetch error (user email):', err);
+    console.error('SES send error:', err);
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Network error' }),
+      body: JSON.stringify({ error: 'Failed to send email', detail: err.message }),
     };
   }
 
   // Send notification to dorka@y2y.hu (best-effort)
   try {
-    await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
+    await sesClient.send(new SendEmailCommand({
+      Source: 'Ground by Y2Y <dorka@y2y.hu>',
+      Destination: { ToAddresses: ['dorka@y2y.hu'] },
+      Message: {
+        Subject: { Data: `Új Ground kitöltés: ${to}`, Charset: 'UTF-8' },
+        Body: { Html: { Data: generateNotificationHTML({ to, profileName, overallScore, dimensions }), Charset: 'UTF-8' } },
       },
-      body: JSON.stringify({
-        from: 'Ground by Y2Y <onboarding@resend.dev>',
-        to: ['dorka@y2y.hu'],
-        subject: `Új Ground kitöltés: ${to}`,
-        html: generateNotificationHTML({ to, profileName, overallScore, dimensions }),
-      }),
-    });
+    }));
   } catch (err) {
     console.error('Notification email error (non-fatal):', err);
   }
