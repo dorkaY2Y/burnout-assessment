@@ -173,8 +173,9 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Ground by Y2Y <noreply@y2y.hu>',
+        from: 'Ground by Y2Y <onboarding@resend.dev>',
         to: [to],
+        reply_to: ['dorka@y2y.hu'],
         subject: emailSubject,
         html: htmlContent,
       }),
@@ -207,7 +208,7 @@ exports.handler = async (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Ground by Y2Y <noreply@y2y.hu>',
+        from: 'Ground by Y2Y <onboarding@resend.dev>',
         to: ['dorka@y2y.hu'],
         subject: `Új Ground kitöltés: ${to}`,
         html: generateNotificationHTML({ to, profileName, overallScore, dimensions }),
