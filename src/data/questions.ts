@@ -18,9 +18,9 @@ export const questions: Question[] = [
   {
     id: 1,
     dimensionId: 'cognitive_flexibility',
-    text: 'Amikor egy bevált folyamat már nem működik...',
-    leftStatement: 'Ragaszkodom a bevált módszerhez – eddig működött',
-    rightStatement: 'Azonnal keresem az alternatívákat és kísérletezek',
+    text: 'Amikor egy eddig jól működő folyamat, mintha akadozna...',
+    leftStatement: 'Alapvetően ragaszkodom hozzá, ha működött, működnie kell',
+    rightStatement: 'Azonnal előveszem, keresünk alternatívát',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -33,8 +33,8 @@ export const questions: Question[] = [
   {
     id: 2,
     dimensionId: 'cognitive_flexibility',
-    text: 'Egy nap alatt stratégiai meetingről operatív tűzoltásba, onnan coaching beszélgetésbe váltasz...',
-    leftStatement: 'Ez a tempó szétszed – nem tudok fókuszálni',
+    text: 'Egy nap alatt a stratégiai meetingből az operatív tűzoltásba, aztán mély coaching beszélgetésbe váltasz a csapatod egy tagjával.',
+    leftStatement: 'Ez a tempó szétszed, sehol nem vagyok ott igazán',
     rightStatement: 'Élvezem a változatosságot, könnyen váltok',
     isReversed: true,
     answers: [
@@ -49,8 +49,8 @@ export const questions: Question[] = [
     id: 3,
     dimensionId: 'cognitive_flexibility',
     text: 'Egy kollégád radikálisan más megközelítést javasol egy projektre, mint amit te elképzeltél...',
-    leftStatement: 'Frusztráló, hogy nem látja be az én elképzelésemet',
-    rightStatement: 'Kíváncsi vagyok – kérem, fejtse ki részletesen',
+    leftStatement: 'Frusztrál, hogy képtelen egyből elfogadni az én elképzelésem.',
+    rightStatement: 'Kíváncsi vagyok a megoldására, kérem, hogy fejtse ki részletesen',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -63,9 +63,9 @@ export const questions: Question[] = [
   {
     id: 4,
     dimensionId: 'cognitive_flexibility',
-    text: 'Az elmúlt félévben hányszor változtattál meg egy saját meggyőződésedet egy csapattag érvelése alapján?',
-    leftStatement: 'A vezető dolga az irányt mutatni, nem változtatni',
-    rightStatement: 'Aktívan keresem, hol tévedhetek',
+    text: 'Sokszor változtatod az eredeti elképzelésedet egy csapattagod érvelése alapján?',
+    leftStatement: 'Alapvetően nem. A vezető dolga irányt mutatni, nem tekergetni a kormányt',
+    rightStatement: 'Igen, persze.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -82,7 +82,7 @@ export const questions: Question[] = [
     dimensionId: 'uncertainty_tolerance',
     text: 'Egy fontos projekt közben hirtelen megváltoznak a piaci feltételek...',
     leftStatement: 'Megbénulok – a bizonytalanság stresszessé tesz',
-    rightStatement: 'Gyorsan felmérem és új tervet rakok össze',
+    rightStatement: 'Szemrebbenés nélkül nekiállok az új tervnek.',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -96,8 +96,8 @@ export const questions: Question[] = [
     id: 6,
     dimensionId: 'uncertainty_tolerance',
     text: 'Hogyan kommunikálsz a csapatoddal, amikor te sem tudod, mi lesz a következő negyedévben?',
-    leftStatement: 'Várok, amíg lesz konkrétum, amit mondhatok',
-    rightStatement: 'Nyíltan mondom – közösen keressük az irányt',
+    leftStatement: 'Várok, amíg van elég konkrétum, ne érezzék a bizonytalanságom',
+    rightStatement: 'Megmondom, hogy én sem tudom mi lesz. Majd együtt rájövünk.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -111,7 +111,7 @@ export const questions: Question[] = [
     id: 7,
     dimensionId: 'uncertainty_tolerance',
     text: 'A te iparágadban komoly átalakulás várható a következő 3 évben (technológiai, szabályozási vagy piaci)...',
-    leftStatement: 'Majd alkalmazkodom, ha eljön – most más a prioritás',
+    leftStatement: 'Majd alkalmazkodom, ha látom pontosan mi változik - most más a prioritás.',
     rightStatement: 'Már most kísérletezek és építek új képességeket',
     isReversed: false,
     answers: [
@@ -144,7 +144,7 @@ export const questions: Question[] = [
     dimensionId: 'autonomy_design',
     text: 'Egy csapattagod más módszert választ egy feladatra, mint amit te javasolnál...',
     leftStatement: 'Csinálja az én módszeremmel – az bevált',
-    rightStatement: 'Hagyom – az eredmény számít, nem az út',
+    rightStatement: 'Hagyom - nekem az eredmény számít csak.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -158,7 +158,7 @@ export const questions: Question[] = [
     id: 10,
     dimensionId: 'autonomy_design',
     text: 'Hogyan delegálsz egy komplex projektet?',
-    leftStatement: 'Inkább magam csinálom – gyorsabb és biztosabb',
+    leftStatement: 'Összerakom a konkrét tervet, és a feladatokat kiosztom.',
     rightStatement: 'Megadom a célt, a megoldást a csapat találja meg',
     isReversed: true,
     answers: [
@@ -172,9 +172,9 @@ export const questions: Question[] = [
   {
     id: 11,
     dimensionId: 'autonomy_design',
-    text: 'Milyen gyakran kérsz státuszfrissítést a csapatodtól egy folyamatban lévő projektnél?',
-    leftStatement: 'Folyamatosan figyelem és azonnal jelzek',
-    rightStatement: 'Közösen alakítjuk ki a check-in ritmust',
+    text: 'Milyen gyakran kérsz státuszt a csapatodtól egy folyamatban levő projektnél?',
+    leftStatement: 'Félszemem rajta.',
+    rightStatement: 'Közösen megállapodunk az elején a státusz ritmusában és ahhoz tartom magam.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -188,8 +188,8 @@ export const questions: Question[] = [
     id: 12,
     dimensionId: 'autonomy_design',
     text: 'Egy junior kolléga hibázik egy fontos prezentációban...',
-    leftStatement: 'Legközelebb inkább én tartom a fontos prezentációkat',
-    rightStatement: 'Megbeszéljük a tanulságot, legközelebb ő jobban csinlja',
+    leftStatement: 'Nekem kellett volna tartanom.',
+    rightStatement: 'Átbeszéljük a tanulságokat, majd legközelebb ügyesebb lesz.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -204,9 +204,9 @@ export const questions: Question[] = [
   {
     id: 13,
     dimensionId: 'psychological_safety',
-    text: 'Egy meetingen senki nem mond ellent a te javaslatodnak...',
-    leftStatement: 'Ez azt jelenti, hogy jó az ötletem – megyünk tovább',
-    rightStatement: 'Gyanús – aktívan provokálom a kritikus gondolkodást',
+    text: 'Egy meetingen láthatóan nem tetszik a csapatomnak valami...',
+    leftStatement: 'De elfogadják, amit mondok, nem ellenkeznek.',
+    rightStatement: 'Egymás szavába vágva jelzik, hogy mi és miért nem jó abban, ahogy én kértem.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -221,7 +221,7 @@ export const questions: Question[] = [
     dimensionId: 'psychological_safety',
     text: 'Milyen gyakran beszélsz nyíltan a saját hibáidról a csapatod előtt?',
     leftStatement: 'Soha – a vezető gyengeségeit nem kell közszemlére tenni',
-    rightStatement: 'Rendszeresen – ez teremti meg a közeget',
+    rightStatement: 'Rendszeresen - mind hibázunk, beszélünk is róla.',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -234,9 +234,9 @@ export const questions: Question[] = [
   {
     id: 15,
     dimensionId: 'psychological_safety',
-    text: 'Egy csapattagod zavartan bevallja, hogy nem érti az AI-t és fél, hogy el fogja veszíteni a munkáját...',
-    leftStatement: 'Mindenki felelős a saját fejlődéséért',
-    rightStatement: 'Megköszönöm az őszinteséget és támogatást ajánlok',
+    text: 'Egy csapattagod hibázott egy fontos projekten és maga jön el hozzád bevallani – még mielőtt te észrevetted volna.',
+    leftStatement: 'Jó, hogy szólt, de a hiba az hiba – ez nem mehet következmény nélkül.',
+    rightStatement: 'Szeretem az ilyet, megköszönöm, átnézzük, javítjuk.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -250,8 +250,8 @@ export const questions: Question[] = [
     id: 16,
     dimensionId: 'psychological_safety',
     text: 'Hogyan kezeled, ha egy megbeszélésen két kollégád hevesen vitatkozik?',
-    leftStatement: 'Eldöntöm a kérdést és lépünk tovább',
-    rightStatement: 'Facilitálom – elválasztom a személyt az ügytől',
+    leftStatement: 'Rövidre zárom helyettük és lépünk tovább.',
+    rightStatement: 'Facilitálom a helyzetet, elválasztom a személyeket és az ügyet',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -268,7 +268,7 @@ export const questions: Question[] = [
     dimensionId: 'adaptive_decision',
     text: 'Egy fontos döntésnél ellentmondásos adataid vannak...',
     leftStatement: 'Várok, amíg teljesen tisztán látom a képet',
-    rightStatement: 'Hozok egy „elég jó” döntést és iterálok',
+    rightStatement: "Hozok egy 'elég jó' döntést és majd folyamatosan alakítjuk még az irányt",
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -281,9 +281,9 @@ export const questions: Question[] = [
   {
     id: 18,
     dimensionId: 'adaptive_decision',
-    text: 'Az utolsó igazán nehéz döntésednél hogyan jutottál el a végső válaszig?',
-    leftStatement: 'A megérzésemre hallgatok – eddig ritkán csapott be',
-    rightStatement: 'Tudatosan mérlegelem az adatokat és az intuíciót',
+    text: 'Olyan területen kell döntened, ahol a csapatodnak több tapasztalata van, mint neked.',
+    leftStatement: 'Én döntök – a felelősség az enyém',
+    rightStatement: 'Hagyom, hogy meghozzák a döntést',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -296,9 +296,9 @@ export const questions: Question[] = [
   {
     id: 19,
     dimensionId: 'adaptive_decision',
-    text: 'Visszavontál-e nyílvánosan egy korábbi döntésedet, amikor új információ érkezett?',
-    leftStatement: 'A következetesség fontosabb, mint a korrekció',
-    rightStatement: 'Rendszeresen korrigálok nyílvánosan új info alapján',
+    text: 'Visszavontál-e nyilvánosan egy korábbi döntésedet, új információ hatására?',
+    leftStatement: 'Nem, a következetesség nekem fontosabb.',
+    rightStatement: 'Igen, rendszeresen korrigálok, ha kell.',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -311,9 +311,9 @@ export const questions: Question[] = [
   {
     id: 20,
     dimensionId: 'adaptive_decision',
-    text: 'Egy döntés meghozatala előtt mennyire vagy tudatában a saját kognitív torzításaidnak?',
-    leftStatement: 'Ez túl elméleti – a tapasztalat fontosabb',
-    rightStatement: 'Aktívan keresem a torzításaimat és rendszereket építek',
+    text: 'Szoktál valakit megkérni, hogy döntés előtt kérdőjelezze meg az elképzelésedet?',
+    leftStatement: 'Nem, majd utólag kiderül, ha tévedtem',
+    rightStatement: 'Igen, keresem a kritikus hangokat, mielőtt döntök',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -330,7 +330,7 @@ export const questions: Question[] = [
     dimensionId: 'group_culture_awareness',
     text: 'Hogyan jellemeznéd a csapatod jelenlegi működési kultúráját?',
     leftStatement: 'Nem értem, miért kellene ezen gondolkodni',
-    rightStatement: 'Pontosan tudom, milyen kultúrát építünk és miért',
+    rightStatement: 'Tudom, milyen kultúrát építünk a csapatban és miért',
     isReversed: true,
     answers: [
       { text: '', score: 5 },
@@ -343,9 +343,9 @@ export const questions: Question[] = [
   {
     id: 22,
     dimensionId: 'group_culture_awareness',
-    text: 'A csapatodban van, aki a stabilitást szereti, és van, aki a változást...',
-    leftStatement: 'Akinek nem tetszik az irány, alkalmazkodik vagy továbbáll',
-    rightStatement: 'Tudatosan használom a különböző preferenciákat',
+    text: 'Észreveszed, ha a csapatodban valami a felszín alatt feszül?',
+    leftStatement: 'Ha nem mondják el, nem az én dolgom kitalálni',
+    rightStatement: 'Tudom olvasni a jeleket és proaktívan foglalkozom velük',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
@@ -373,9 +373,9 @@ export const questions: Question[] = [
   {
     id: 24,
     dimensionId: 'group_culture_awareness',
-    text: 'Mennyire tudatosan váltasz vezetői stílust attól függően, hogy a csapatodnak épp mire van szüksége?',
-    leftStatement: 'A jó vezető autentikus – nem kell szerepeket játszani',
-    rightStatement: 'Diagnosztizálom a szükségleteket és adaptálom a stílusom',
+    text: 'Volt már, hogy ugyanazt a csapatot teljesen másképp kellett vezetned, mint ahogy előző hónapban még tetted?',
+    leftStatement: 'Nem, én ugyanolyan vagyok mindig, mindenkivel, minden helyzetben.',
+    rightStatement: 'Igen, figyelek rá, hogy mikor, kit, hogyan vezessek ahhoz, hogy neki és a helyzetnek a legjobb legyen.',
     isReversed: false,
     answers: [
       { text: '', score: 5 },
