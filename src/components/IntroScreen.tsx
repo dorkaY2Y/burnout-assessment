@@ -8,6 +8,7 @@ interface IntroScreenProps {
 
 const LANG_CYCLE: Language[] = ['hu', 'en', 'de'];
 const LANG_LABELS: Record<Language, string> = { hu: 'Magyar', en: 'English', de: 'Deutsch' };
+const LANG_FLAGS: Record<Language, string> = { hu: '🇭🇺', en: '🇬🇧', de: '🇩🇪' };
 
 const COPY = {
   hu: {
@@ -95,20 +96,22 @@ export default function IntroScreen({ onStart, language, setLanguage }: IntroScr
       <div className="max-w-lg w-full text-center animate-fade-up">
 
         {/* Language toggle */}
-        <div className="flex justify-end mb-6 gap-2">
-          {LANG_CYCLE.map((lang) => (
-            <button
-              key={lang}
-              onClick={() => setLanguage(lang)}
-              className={`text-xs border rounded-lg px-3 py-1.5 transition-colors ${
-                language === lang
-                  ? 'border-red-500 text-red-400 bg-red-500/10'
-                  : 'border-gray-700 text-gray-500 hover:text-gray-300 hover:border-gray-600'
-              }`}
-            >
-              {LANG_LABELS[lang]}
-            </button>
-          ))}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex bg-gray-900 border border-gray-800 rounded-full p-1 gap-0.5">
+            {LANG_CYCLE.map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                className={`relative text-sm font-medium px-4 py-1.5 rounded-full transition-all duration-200 ${
+                  language === lang
+                    ? 'bg-red-500 text-white shadow-md shadow-red-500/20'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                {LANG_FLAGS[lang]} {LANG_LABELS[lang]}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Branding */}
