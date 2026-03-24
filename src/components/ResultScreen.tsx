@@ -59,13 +59,18 @@ const COPY = {
   },
 };
 
-// Dimenziónkénti kockázati szín a pontszám alapján (zöld / sárga / piros)
+// Dimenziónkénti kockázati szín: zöld / sárga / piros (WHO: zöld-sárga-piros skála)
 function getDimRiskColor(score: number): string {
   if (score < 30) return '#10b981'; // zöld
   if (score < 55) return '#f59e0b'; // sárga
-  if (score < 75) return '#ef4444'; // piros
-  return '#6b7280';                 // szürke (krízis)
+  return '#ef4444';                 // piros (high + crisis egyaránt)
 }
+
+const WHO_NOTE = {
+  hu: 'A kiégést a WHO 2022-ben az ICD-11 nemzetközi osztályozásba vette fel (QD85) — elismert, komoly egészségügyi állapot. Az üzleti coaching hatékony eszköz a megelőzésben és a korai jelzések feldolgozásában. Ha azonban valódi kiégés gyanúja áll fenn, pszichoterápia vagy orvosi konzultáció is indokolt lehet. Vedd komolyan.',
+  en: 'Burnout was officially recognized by the WHO in the ICD-11 classification in 2022 (QD85) — it is a serious, acknowledged health condition. Business coaching is a powerful tool for prevention and early intervention. However, if genuine burnout is suspected, psychotherapy or medical consultation may also be appropriate. Take it seriously.',
+  de: 'Burnout wurde 2022 von der WHO in die ICD-11-Klassifikation aufgenommen (QD85) — es ist ein ernstzunehmendes, anerkanntes Gesundheitsphänomen. Business-Coaching ist ein wirksames Instrument zur Prävention und frühzeitigen Begleitung. Bei konkretem Burnout-Verdacht kann jedoch auch Psychotherapie oder ärztliche Beratung angezeigt sein. Nimm es ernst.',
+};
 
 function DimensionBar({ label, value, emoji, dimColor }: { label: string; value: number; emoji: string; dimColor: string }) {
   const riskColor = getDimRiskColor(value);
@@ -166,6 +171,14 @@ export default function ResultScreen({ result, language, setLanguage, onRetake }
           >
             {t.cta} →
           </a>
+        </div>
+
+        {/* WHO note */}
+        <div className="mb-6 rounded-2xl border border-gray-800 bg-gray-900/60 p-5">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
+            {language === 'hu' ? 'Fontos tudni' : language === 'de' ? 'Wichtig zu wissen' : 'Important to know'}
+          </p>
+          <p className="text-xs text-gray-400 leading-relaxed">{WHO_NOTE[language]}</p>
         </div>
 
         {/* Retake */}

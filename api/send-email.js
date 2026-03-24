@@ -329,30 +329,23 @@ const generateNotificationHTML = ({ to, profileTitle, overall, riskLevel, dimens
 </html>`;
 };
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+// Vercel serverless function handler
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   let payload;
   try {
-    payload = JSON.parse(event.body);
+    payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   } catch (e) {
-    return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Invalid request body' }),
-    };
+    return res.status(400).json({ error: 'Invalid request body' });
   }
 
   const { to, language, profileTitle, profileDesc, profileEmoji, overall, riskLevel, dimensions } = payload;
 
   if (!to || !to.includes('@')) {
-    return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Missing or invalid email address' }),
-    };
+    return res.status(400).json({ error: 'Missing or invalid email address' });
   }
 
   const isHu = language === 'hu';
@@ -378,11 +371,7 @@ exports.handler = async (event) => {
     }));
   } catch (err) {
     console.error('SES send error:', err);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Failed to send email', detail: err.message }),
-    };
+    return res.status(500).json({ error: 'Failed to send email', detail: err.message });
   }
 
   // Notification to dorka (best-effort)
@@ -399,9 +388,5 @@ exports.handler = async (event) => {
     console.error('Notification email error (non-fatal):', err);
   }
 
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ success: true }),
-  };
+  return res.status(200).json({ success: true });
 };
