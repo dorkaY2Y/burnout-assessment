@@ -10,6 +10,7 @@ interface QuizScreenProps {
 const SCALE_LABELS = {
   hu: ['Soha', 'Ritkán', 'Néha', 'Gyakran', 'Mindig'],
   en: ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'],
+  de: ['Nie', 'Selten', 'Manchmal', 'Oft', 'Immer'],
 };
 
 export default function QuizScreen({ onComplete, language }: QuizScreenProps) {
@@ -63,7 +64,7 @@ export default function QuizScreen({ onComplete, language }: QuizScreenProps) {
             onClick={handleBack}
             className="text-gray-500 hover:text-gray-300 text-sm mb-3 transition-colors"
           >
-            ← {language === 'hu' ? 'Vissza' : 'Back'}
+            ← {language === 'hu' ? 'Vissza' : language === 'de' ? 'Zurück' : 'Back'}
           </button>
         )}
 
@@ -71,17 +72,8 @@ export default function QuizScreen({ onComplete, language }: QuizScreenProps) {
           currentIndex={currentIndex}
           totalQuestions={QUESTIONS.length}
           currentDimension={q.dimension}
+          language={language}
         />
-
-        {/* Dimension badge */}
-        <div className="mb-6" style={{ minHeight: '36px' }}>
-          <span
-            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border"
-            style={{ color: dim.color, borderColor: `${dim.color}30`, backgroundColor: `${dim.color}10` }}
-          >
-            {dim.emoji} {dim.label[language]}
-          </span>
-        </div>
 
         {/* Question */}
         <div
@@ -135,8 +127,8 @@ export default function QuizScreen({ onComplete, language }: QuizScreenProps) {
             }`}
           >
             {currentIndex < QUESTIONS.length - 1
-              ? language === 'hu' ? 'Következő' : 'Next'
-              : language === 'hu' ? 'Eredmény megtekintése' : 'See results'}
+              ? language === 'hu' ? 'Következő' : language === 'de' ? 'Weiter' : 'Next'
+              : language === 'hu' ? 'Eredmény megtekintése' : language === 'de' ? 'Ergebnisse anzeigen' : 'See results'}
           </button>
         </div>
       </div>

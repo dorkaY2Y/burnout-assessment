@@ -24,6 +24,14 @@ const COPY = {
     skip: 'Skip',
     privacy: "We won't spam you. Unsubscribe anytime.",
   },
+  de: {
+    title: 'Ergebnisse per E-Mail erhalten!',
+    subtitle: 'Wir senden dir die detaillierte Analyse, die du jederzeit abrufen kannst.',
+    placeholder: 'deine@email.de',
+    submit: 'Ergebnisse zusenden',
+    skip: 'Überspringen',
+    privacy: 'Kein Spam. Jederzeit abmeldbar.',
+  },
 };
 
 export default function EmailCapture({ onSubmit, onSkip, language }: EmailCaptureProps) {

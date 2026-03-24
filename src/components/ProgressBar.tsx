@@ -4,9 +4,10 @@ interface ProgressBarProps {
   currentIndex: number;
   totalQuestions: number;
   currentDimension: string;
+  language?: 'hu' | 'en' | 'de';
 }
 
-export default function ProgressBar({ currentIndex, totalQuestions, currentDimension }: ProgressBarProps) {
+export default function ProgressBar({ currentIndex, totalQuestions, currentDimension, language = 'hu' }: ProgressBarProps) {
   const progress = ((currentIndex) / totalQuestions) * 100;
   const dim = DIMENSIONS[currentDimension as keyof typeof DIMENSIONS];
 
@@ -14,7 +15,7 @@ export default function ProgressBar({ currentIndex, totalQuestions, currentDimen
     <div className="mb-6">
       <div className="flex justify-between items-center mb-2">
         <span className="text-xs font-medium" style={{ color: dim?.color || '#6b7280' }}>
-          {dim?.emoji} {dim?.label?.hu}
+          {dim?.emoji} {dim?.label?.[language]}
         </span>
         <span className="text-xs text-gray-500 font-mono">
           {currentIndex + 1} / {totalQuestions}

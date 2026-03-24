@@ -3,45 +3,44 @@ import IntroScreen from './components/IntroScreen';
 import QuizScreen from './components/QuizScreen';
 import ResultScreen from './components/ResultScreen';
 import EmailCapture from './components/EmailCapture';
-import { calculateResults, BurnoutResult } from './utils/scoring';
-import { Language } from './data/questions';
+import { calculateResults, BurnoutResult, PROFILE_INFO } from './utils/scoring';
+import { DIMENSIONS, Language } from './data/questions';
 
 type Screen = 'intro' | 'quiz' | 'email' | 'result';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+async function sendResultEmail(email: string, result: BurnoutResult, language: Language) {
+  const profile = PROFILE_INFO[result.profile];
 
-async function saveResult(email: string, result: BurnoutResult) {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return;
+  const dimensions = [
+    { id: 'physical', name: DIMENSIONS.physical.label[language], emoji: DIMENSIONS.physical.emoji, color: DIMENSIONS.physical.color, score: result.physical },
+    { id: 'emotional', name: DIMENSIONS.emotional.label[language], emoji: DIMENSIONS.emotional.emoji, color: DIMENSIONS.emotional.color, score: result.emotional },
+    { id: 'cognitive', name: DIMENSIONS.cognitive.label[language], emoji: DIMENSIONS.cognitive.emoji, color: DIMENSIONS.cognitive.color, score: result.cognitive },
+    { id: 'team', name: DIMENSIONS.team.label[language], emoji: DIMENSIONS.team.emoji, color: DIMENSIONS.team.color, score: result.team },
+  ];
+
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/burnout_results`, {
+    await fetch('/.netlify/functions/send-email', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        Prefer: 'return=minimal',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email,
-        overall_score: Math.round(result.overall),
-        emotional: Math.round(result.emotional),
-        detachment: Math.round(result.detachment),
-        cognitive: Math.round(result.cognitive),
-        efficacy: Math.round(result.efficacy),
-        somatic: Math.round(result.somatic),
-        profile: result.profile,
-        risk_level: result.riskLevel,
+        to: email,
+        language,
+        profileTitle: profile.title[language],
+        profileDesc: profile.desc[language],
+        profileEmoji: profile.emoji,
+        overall: result.overall,
+        riskLevel: result.riskLevel,
+        dimensions,
       }),
     });
   } catch (e) {
-    console.error('Supabase save failed:', e);
+    console.error('Email send failed:', e);
   }
 }
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('intro');
-  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [_answers, setAnswers] = useState<Record<number, number>>({});
   const [result, setResult] = useState<BurnoutResult | null>(null);
   const [language, setLanguage] = useState<Language>('hu');
 
@@ -53,7 +52,7 @@ export default function App() {
   };
 
   const handleEmailSubmit = async (email: string) => {
-    if (result) await saveResult(email, result);
+    if (result) await sendResultEmail(email, result, language);
     setScreen('result');
   };
 
@@ -89,6 +88,7 @@ export default function App() {
         <ResultScreen
           result={result}
           language={language}
+          setLanguage={setLanguage}
           onRetake={handleRetake}
         />
       )}

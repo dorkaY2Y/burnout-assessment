@@ -1,236 +1,252 @@
 // Y2Y Burnout Compass — Kérdésbank
-// Alapja: MBI (Maslach Burnout Inventory) + BAT (Burnout Assessment Tool, Leiter & Maslach 2021)
-// Skála: 1-5 (soha / never → mindig / always)
-// Kétnyelvű: hu + en
+// Alapja: CBI (Copenhagen Burnout Inventory) + OLBI (Oldenburg Burnout Inventory)
+// Foxconn leadership kontextus — 4 dimenzió
+// Skála: 1-5 Likert (egyáltalán nem jellemző → teljes mértékben jellemző)
+// Háromnyelvű: hu + en + de
 
-export type Language = 'hu' | 'en';
+export type Language = 'hu' | 'en' | 'de';
 
 export interface BurnoutQuestion {
   id: number;
-  text: { hu: string; en: string };
-  dimension: 'emotional' | 'detachment' | 'cognitive' | 'efficacy' | 'somatic';
+  text: { hu: string; en: string; de: string };
+  dimension: 'physical' | 'emotional' | 'cognitive' | 'team';
   reversed?: boolean; // reversed: 5 = alacsony burnout
 }
 
 export const QUESTIONS: BurnoutQuestion[] = [
-  // ─── ÉRZELMI KIMERÜLTSÉG (6 kérdés) ─────────────────────────────────────
+  // ─── 🔴 FIZIKAI KIMERÜLTSÉG (6 kérdés) ──────────────────────────────────
   {
     id: 1,
     text: {
-      hu: 'Kimerülten érzem magam, mire a munkanapom véget ér.',
-      en: 'I feel emotionally drained by the end of my workday.',
+      hu: 'Fizikailag kimerültnek érzem magam a munkanapom végére.',
+      en: 'I feel physically exhausted by the end of my workday.',
+      de: 'Ich bin am Ende meines Arbeitstages körperlich erschöpft.',
     },
-    dimension: 'emotional',
+    dimension: 'physical',
   },
   {
     id: 2,
     text: {
-      hu: 'Reggel már fáradtan kelek, amikor munkanapra kell felkelni.',
-      en: 'I feel tired when I get up in the morning and have to face another day at work.',
+      hu: 'Reggel már fáradtan ébredek, amikor munkába kell mennem.',
+      en: 'I wake up feeling tired on workdays.',
+      de: 'Ich wache an Arbeitstagen müde auf.',
     },
-    dimension: 'emotional',
+    dimension: 'physical',
   },
   {
     id: 3,
     text: {
-      hu: 'Érzem, hogy a végső határomon vagyok.',
-      en: 'I feel I am at the end of my rope.',
+      hu: 'Egyre több pihenésre van szükségem ahhoz, hogy visszanyerjem az erőmet.',
+      en: 'I need more and more rest to recover my energy.',
+      de: 'Ich brauche immer mehr Erholung, um neue Energie zu tanken.',
     },
-    dimension: 'emotional',
+    dimension: 'physical',
   },
   {
     id: 4,
     text: {
-      hu: 'Munkám emocionálisan kimer.',
-      en: 'Working with people all day is really a strain for me.',
+      hu: 'A munkanapokon kevés energiám marad a magánéletemre.',
+      en: 'I have little energy left for my personal life on workdays.',
+      de: 'An Arbeitstagen habe ich kaum noch Energie für mein Privatleben.',
     },
-    dimension: 'emotional',
+    dimension: 'physical',
   },
   {
     id: 5,
     text: {
-      hu: 'Frusztrált érzem magam a munkámtól.',
-      en: 'I feel frustrated by my job.',
+      hu: 'A testem jelzi a túlterheltséget (fejfájás, izomfeszülés, alvászavar).',
+      en: 'My body signals overload (headaches, muscle tension, sleep problems).',
+      de: 'Mein Körper zeigt Zeichen von Überlastung (Kopfschmerzen, Muskelverspannungen, Schlafprobleme).',
     },
-    dimension: 'emotional',
+    dimension: 'physical',
   },
   {
     id: 6,
     text: {
-      hu: 'Közvetlenül emberekkel dolgozni megterhelő számomra.',
-      en: 'I feel I give more than I get back from my work.',
+      hu: 'Munka után elegendő energiám van a számomra fontos tevékenységekre.',
+      en: 'After work, I still have enough energy for activities that matter to me.',
+      de: 'Nach der Arbeit habe ich noch genug Energie für Aktivitäten, die mir wichtig sind.',
     },
-    dimension: 'emotional',
+    dimension: 'physical',
+    reversed: true,
   },
 
-  // ─── MENTÁLIS DISTANCIA / DEPERSZONALIZÁCIÓ (4 kérdés) ───────────────────
+  // ─── 🟠 ÉRZELMI KIMERÜLTSÉG (6 kérdés) ──────────────────────────────────
   {
     id: 7,
     text: {
-      hu: 'Azt érzem, hogy közömbössé váltam mások problémáival szemben.',
-      en: 'I have become less interested in the problems of the people I work with.',
+      hu: 'Érzelmileg megterhelőnek érzem a munkámat.',
+      en: 'I find my work emotionally draining.',
+      de: 'Meine Arbeit empfinde ich als emotional belastend.',
     },
-    dimension: 'detachment',
+    dimension: 'emotional',
   },
   {
     id: 8,
     text: {
-      hu: 'Attól tartok, a munkám érzéketlenné tesz.',
-      en: 'I worry that this job is hardening me emotionally.',
+      hu: 'Frusztrált vagyok a munkahelyi helyzetek miatt.',
+      en: 'I feel frustrated by situations at work.',
+      de: 'Ich bin frustriert über Situationen an meinem Arbeitsplatz.',
     },
-    dimension: 'detachment',
+    dimension: 'emotional',
   },
   {
     id: 9,
     text: {
-      hu: 'Nem igazán érdekel, mi történik a kollégáimmal.',
-      en: 'I don\'t really care what happens to some of the people I work with.',
+      hu: 'Úgy érzem, hogy a végső határaimon vagyok.',
+      en: 'I feel like I am at the end of my rope.',
+      de: 'Ich habe das Gefühl, an meinen Grenzen angekommen zu sein.',
     },
-    dimension: 'detachment',
+    dimension: 'emotional',
   },
   {
     id: 10,
     text: {
-      hu: 'Cinikusabbá váltam, mióta itt dolgozom.',
-      en: 'I have become more cynical about whether my work matters.',
+      hu: 'Nehezebben viselem a munkahelyi konfliktusokat, mint korábban.',
+      en: 'I find it harder to cope with workplace conflicts than before.',
+      de: 'Ich finde es schwerer als früher, mit Konflikten am Arbeitsplatz umzugehen.',
     },
-    dimension: 'detachment',
+    dimension: 'emotional',
   },
-
-  // ─── KOGNITÍV FUNKCIÓK (4 kérdés) ────────────────────────────────────────
   {
     id: 11,
     text: {
-      hu: 'Nehezen koncentrálok munkavégzés közben.',
-      en: 'I find it difficult to concentrate at work.',
+      hu: 'Munka közben gyakran érzek szorongást vagy feszültséget.',
+      en: 'I often feel anxious or tense during work.',
+      de: 'Während der Arbeit fühle ich mich oft ängstlich oder angespannt.',
     },
-    dimension: 'cognitive',
+    dimension: 'emotional',
   },
   {
     id: 12,
     text: {
-      hu: 'Feladataim ellátása közben hibákat vetek, ami korábban nem volt jellemző rám.',
-      en: 'I make more mistakes at work than I used to.',
+      hu: 'Képes vagyok elengedni a munkahelyi stresszt, amikor hazamegyek.',
+      en: 'I am able to let go of work-related stress when I go home.',
+      de: 'Ich kann den Arbeitsstress loslassen, wenn ich nach Hause komme.',
     },
-    dimension: 'cognitive',
+    dimension: 'emotional',
+    reversed: true,
   },
+
+  // ─── 🟡 KOGNITÍV TÁVOLSÁGTARTÁS (5 kérdés) ─────────────────────────────
   {
     id: 13,
     text: {
-      hu: 'Nehezen hozok döntéseket, ami korábban nem volt jellemző rám.',
-      en: 'I find it harder to make decisions than I used to.',
+      hu: 'Egyre kevésbé érdekel, hogy mi történik a munkahelyemen.',
+      en: 'I am less and less interested in what happens at my workplace.',
+      de: 'Ich interessiere mich immer weniger dafür, was an meinem Arbeitsplatz passiert.',
     },
     dimension: 'cognitive',
   },
   {
     id: 14,
     text: {
-      hu: 'Munkám közben nehezen tartom fenn a fókuszomat.',
-      en: 'I struggle to maintain focus during work tasks.',
+      hu: 'Cinikusabbá váltam a munkámmal kapcsolatban.',
+      en: 'I have become more cynical about my work.',
+      de: 'Ich bin zynischer gegenüber meiner Arbeit geworden.',
     },
     dimension: 'cognitive',
   },
-
-  // ─── TELJESÍTMÉNYÉRZET (4 kérdés — reversed!) ────────────────────────────
   {
     id: 15,
     text: {
-      hu: 'Hatékonyan megoldom a munkámban felmerülő problémákat.',
-      en: 'I effectively deal with the problems that arise in my work.',
+      hu: 'Megkérdőjelezem, hogy van-e értelme annak, amit csinálok.',
+      en: 'I question whether what I do has any real purpose.',
+      de: 'Ich hinterfrage, ob das, was ich tue, einen echten Sinn hat.',
     },
-    dimension: 'efficacy',
-    reversed: true,
+    dimension: 'cognitive',
   },
   {
     id: 16,
     text: {
-      hu: 'Pozitívan befolyásolom mások életét a munkámon keresztül.',
-      en: 'I feel I am positively influencing other people\'s lives through my work.',
+      hu: 'A munkámat mechanikusan végzem, belső motiváció nélkül.',
+      en: 'I do my work mechanically, without inner motivation.',
+      de: 'Ich erledige meine Arbeit mechanisch, ohne innere Motivation.',
     },
-    dimension: 'efficacy',
-    reversed: true,
+    dimension: 'cognitive',
   },
   {
     id: 17,
     text: {
-      hu: 'Könnyen megteremtem a nyugodt légkört a csapatommal.',
-      en: 'I can easily create a relaxed atmosphere with the people I work with.',
+      hu: 'A munkám továbbra is fontos és értékes számomra.',
+      en: 'My work continues to be important and meaningful to me.',
+      de: 'Meine Arbeit ist mir weiterhin wichtig und bedeutsam.',
     },
-    dimension: 'efficacy',
-    reversed: true,
-  },
-  {
-    id: 18,
-    text: {
-      hu: 'Energikusnak érzem magam a munkámban.',
-      en: 'I feel energized and accomplished when I finish work.',
-    },
-    dimension: 'efficacy',
+    dimension: 'cognitive',
     reversed: true,
   },
 
-  // ─── SZOMATIKUS JELZÉSEK (4 kérdés) ──────────────────────────────────────
+  // ─── 🔵 CSAPAT- ÉS SZERVEZETI KAPCSOLAT (5 kérdés) ─────────────────────
+  {
+    id: 18,
+    text: {
+      hu: 'A csapatom irányítása egyre inkább megterhelő számomra.',
+      en: 'Managing my team has become increasingly burdensome.',
+      de: 'Das Führen meines Teams empfinde ich als zunehmend belastend.',
+    },
+    dimension: 'team',
+  },
   {
     id: 19,
     text: {
-      hu: 'Fejfájással, izomfeszüléssel ébredek.',
-      en: 'I wake up with headaches or muscle tension.',
+      hu: 'Nehezen találom meg a türelmet a beosztottjaim problémáihoz.',
+      en: "I struggle to find patience for my team members' problems.",
+      de: 'Es fällt mir schwer, Geduld für die Probleme meiner Mitarbeiter aufzubringen.',
     },
-    dimension: 'somatic',
+    dimension: 'team',
   },
   {
     id: 20,
     text: {
-      hu: 'Alvási problémáim vannak (nehezen alszom el vagy éjjel felébredek).',
-      en: 'I have trouble sleeping (falling asleep or staying asleep).',
+      hu: 'Úgy érzem, a szervezet nem értékeli eléggé az erőfeszítéseimet.',
+      en: 'I feel the organization does not sufficiently value my efforts.',
+      de: 'Ich habe das Gefühl, dass die Organisation meinen Einsatz nicht ausreichend wertschätzt.',
     },
-    dimension: 'somatic',
+    dimension: 'team',
   },
   {
     id: 21,
     text: {
-      hu: 'Testi tüneteket (pl. hasi görcs, szívdobogás) tapasztalok munkával kapcsolatos stressz esetén.',
-      en: 'I experience physical symptoms (e.g. stomach ache, palpitations) when stressed at work.',
+      hu: 'Vezetőként magányosnak érzem magam a döntéseim súlya alatt.',
+      en: 'As a leader, I feel lonely under the weight of my decisions.',
+      de: 'Als Führungskraft fühle ich mich unter dem Gewicht meiner Entscheidungen einsam.',
     },
-    dimension: 'somatic',
+    dimension: 'team',
   },
   {
     id: 22,
     text: {
-      hu: 'Az elmúlt időszakban betegséggel töltött napjaim száma nőtt.',
-      en: 'The number of sick days I have taken has increased recently.',
+      hu: 'Jó kapcsolatom van a csapatommal, és támogatónak érzem a környezetemet.',
+      en: 'I have a good relationship with my team and feel supported.',
+      de: 'Ich habe eine gute Beziehung zu meinem Team und fühle mich unterstützt.',
     },
-    dimension: 'somatic',
+    dimension: 'team',
+    reversed: true,
   },
 ];
 
 export const DIMENSIONS: Record<
   BurnoutQuestion['dimension'],
-  { label: { hu: string; en: string }; emoji: string; color: string }
+  { label: { hu: string; en: string; de: string }; emoji: string; color: string }
 > = {
-  emotional: {
-    label: { hu: 'Érzelmi Kimerültség', en: 'Emotional Exhaustion' },
-    emoji: '💔',
+  physical: {
+    label: { hu: 'Fizikai Kimerültség', en: 'Physical Exhaustion', de: 'Körperliche Erschöpfung' },
+    emoji: '🔴',
     color: '#ef4444',
   },
-  detachment: {
-    label: { hu: 'Mentális Distancia', en: 'Mental Detachment' },
-    emoji: '🌫️',
-    color: '#8b5cf6',
-  },
-  cognitive: {
-    label: { hu: 'Kognitív Terhelés', en: 'Cognitive Impairment' },
-    emoji: '🧠',
+  emotional: {
+    label: { hu: 'Érzelmi Kimerültség', en: 'Emotional Exhaustion', de: 'Emotionale Erschöpfung' },
+    emoji: '🟠',
     color: '#f97316',
   },
-  efficacy: {
-    label: { hu: 'Teljesítményérzet', en: 'Personal Efficacy' },
-    emoji: '⚡',
-    color: '#3b82f6',
+  cognitive: {
+    label: { hu: 'Kognitív Távolságtartás', en: 'Cognitive Distancing', de: 'Kognitive Distanzierung' },
+    emoji: '🟡',
+    color: '#eab308',
   },
-  somatic: {
-    label: { hu: 'Testi Jelzések', en: 'Physical Signals' },
-    emoji: '😴',
-    color: '#10b981',
+  team: {
+    label: { hu: 'Csapat & Szervezet', en: 'Team & Organization', de: 'Team & Organisation' },
+    emoji: '🔵',
+    color: '#3b82f6',
   },
 };
