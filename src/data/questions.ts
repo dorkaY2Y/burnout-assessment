@@ -1,388 +1,236 @@
-export interface Answer {
-  text: string;
-  score: number;
-}
+// Y2Y Burnout Compass — Kérdésbank
+// Alapja: MBI (Maslach Burnout Inventory) + BAT (Burnout Assessment Tool, Leiter & Maslach 2021)
+// Skála: 1-5 (soha / never → mindig / always)
+// Kétnyelvű: hu + en
 
-export interface Question {
+export type Language = 'hu' | 'en';
+
+export interface BurnoutQuestion {
   id: number;
-  dimensionId: string;
-  text: string;
-  leftStatement: string;
-  rightStatement: string;
-  isReversed: boolean; // true = left is high score, false = right is high score
-  answers: Answer[];
+  text: { hu: string; en: string };
+  dimension: 'emotional' | 'detachment' | 'cognitive' | 'efficacy' | 'somatic';
+  reversed?: boolean; // reversed: 5 = alacsony burnout
 }
 
-export const questions: Question[] = [
-  // KOGNITÍV RUGALMASSÁG (1-4)
+export const QUESTIONS: BurnoutQuestion[] = [
+  // ─── ÉRZELMI KIMERÜLTSÉG (6 kérdés) ─────────────────────────────────────
   {
     id: 1,
-    dimensionId: 'cognitive_flexibility',
-    text: 'Amikor egy eddig jól működő folyamat, mintha akadozna...',
-    leftStatement: 'Alapvetően ragaszkodom hozzá, ha működött, működnie kell',
-    rightStatement: 'Azonnal előveszem, keresünk alternatívát',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Kimerülten érzem magam, mire a munkanapom véget ér.',
+      en: 'I feel emotionally drained by the end of my workday.',
+    },
+    dimension: 'emotional',
   },
   {
     id: 2,
-    dimensionId: 'cognitive_flexibility',
-    text: 'Egy nap alatt a stratégiai meetingből az operatív tűzoltásba, aztán mély coaching beszélgetésbe váltasz a csapatod egy tagjával.',
-    leftStatement: 'Ez a tempó szétszed, sehol nem vagyok ott igazán',
-    rightStatement: 'Élvezem a változatosságot, könnyen váltok',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Reggel már fáradtan kelek, amikor munkanapra kell felkelni.',
+      en: 'I feel tired when I get up in the morning and have to face another day at work.',
+    },
+    dimension: 'emotional',
   },
   {
     id: 3,
-    dimensionId: 'cognitive_flexibility',
-    text: 'Egy kollégád radikálisan más megközelítést javasol egy projektre, mint amit te elképzeltél...',
-    leftStatement: 'Frusztrál, hogy képtelen egyből elfogadni az én elképzelésem.',
-    rightStatement: 'Kíváncsi vagyok a megoldására, kérem, hogy fejtse ki részletesen',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Érzem, hogy a végső határomon vagyok.',
+      en: 'I feel I am at the end of my rope.',
+    },
+    dimension: 'emotional',
   },
   {
     id: 4,
-    dimensionId: 'cognitive_flexibility',
-    text: 'Sokszor változtatod az eredeti elképzelésedet egy csapattagod érvelése alapján?',
-    leftStatement: 'Alapvetően nem. A vezető dolga irányt mutatni, nem tekergetni a kormányt',
-    rightStatement: 'Igen, persze.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Munkám emocionálisan kimer.',
+      en: 'Working with people all day is really a strain for me.',
+    },
+    dimension: 'emotional',
   },
-
-  // BIZONYTALANSÁG-TŰRÉS (5-8)
   {
     id: 5,
-    dimensionId: 'uncertainty_tolerance',
-    text: 'Egy fontos projekt közben hirtelen megváltoznak a piaci feltételek...',
-    leftStatement: 'Megbénulok – a bizonytalanság stresszessé tesz',
-    rightStatement: 'Szemrebbenés nélkül nekiállok az új tervnek.',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Frusztrált érzem magam a munkámtól.',
+      en: 'I feel frustrated by my job.',
+    },
+    dimension: 'emotional',
   },
   {
     id: 6,
-    dimensionId: 'uncertainty_tolerance',
-    text: 'Hogyan kommunikálsz a csapatoddal, amikor te sem tudod, mi lesz a következő negyedévben?',
-    leftStatement: 'Várok, amíg van elég konkrétum, ne érezzék a bizonytalanságom',
-    rightStatement: 'Megmondom, hogy én sem tudom mi lesz. Majd együtt rájövünk.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Közvetlenül emberekkel dolgozni megterhelő számomra.',
+      en: 'I feel I give more than I get back from my work.',
+    },
+    dimension: 'emotional',
   },
+
+  // ─── MENTÁLIS DISTANCIA / DEPERSZONALIZÁCIÓ (4 kérdés) ───────────────────
   {
     id: 7,
-    dimensionId: 'uncertainty_tolerance',
-    text: 'A te iparágadban komoly átalakulás várható a következő 3 évben (technológiai, szabályozási vagy piaci)...',
-    leftStatement: 'Majd alkalmazkodom, ha látom pontosan mi változik - most más a prioritás.',
-    rightStatement: 'Már most kísérletezek és építek új képességeket',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Azt érzem, hogy közömbössé váltam mások problémáival szemben.',
+      en: 'I have become less interested in the problems of the people I work with.',
+    },
+    dimension: 'detachment',
   },
   {
     id: 8,
-    dimensionId: 'uncertainty_tolerance',
-    text: 'Vezetőként hogyan viszonyulsz a hosszú távú tervezéshez a jelenlegi környezetben?',
-    leftStatement: 'Hosszú távú terv nélkül nem tudok vezetni',
-    rightStatement: 'Rövid iterációkban gondolkodom, adaptálható vízióval',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Attól tartok, a munkám érzéketlenné tesz.',
+      en: 'I worry that this job is hardening me emotionally.',
+    },
+    dimension: 'detachment',
   },
-
-  // AUTONÓMIA-TERVEZÉS (9-12)
   {
     id: 9,
-    dimensionId: 'autonomy_design',
-    text: 'Egy csapattagod más módszert választ egy feladatra, mint amit te javasolnál...',
-    leftStatement: 'Csinálja az én módszeremmel – az bevált',
-    rightStatement: 'Hagyom - nekem az eredmény számít csak.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Nem igazán érdekel, mi történik a kollégáimmal.',
+      en: 'I don\'t really care what happens to some of the people I work with.',
+    },
+    dimension: 'detachment',
   },
   {
     id: 10,
-    dimensionId: 'autonomy_design',
-    text: 'Hogyan delegálsz egy komplex projektet?',
-    leftStatement: 'Összerakom a konkrét tervet, és a feladatokat kiosztom.',
-    rightStatement: 'Megadom a célt, a megoldást a csapat találja meg',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Cinikusabbá váltam, mióta itt dolgozom.',
+      en: 'I have become more cynical about whether my work matters.',
+    },
+    dimension: 'detachment',
   },
+
+  // ─── KOGNITÍV FUNKCIÓK (4 kérdés) ────────────────────────────────────────
   {
     id: 11,
-    dimensionId: 'autonomy_design',
-    text: 'Milyen gyakran kérsz státuszt a csapatodtól egy folyamatban levő projektnél?',
-    leftStatement: 'Félszemem rajta.',
-    rightStatement: 'Közösen megállapodunk az elején a státusz ritmusában és ahhoz tartom magam.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Nehezen koncentrálok munkavégzés közben.',
+      en: 'I find it difficult to concentrate at work.',
+    },
+    dimension: 'cognitive',
   },
   {
     id: 12,
-    dimensionId: 'autonomy_design',
-    text: 'Egy junior kolléga hibázik egy fontos prezentációban...',
-    leftStatement: 'Nekem kellett volna tartanom.',
-    rightStatement: 'Átbeszéljük a tanulságokat, majd legközelebb ügyesebb lesz.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Feladataim ellátása közben hibákat vetek, ami korábban nem volt jellemző rám.',
+      en: 'I make more mistakes at work than I used to.',
+    },
+    dimension: 'cognitive',
   },
-
-  // PSZICHOLÓGIAI BIZTONSÁG (13-16)
   {
     id: 13,
-    dimensionId: 'psychological_safety',
-    text: 'Egy meetingen láthatóan nem tetszik a csapatomnak valami...',
-    leftStatement: 'De elfogadják, amit mondok, nem ellenkeznek.',
-    rightStatement: 'Egymás szavába vágva jelzik, hogy mi és miért nem jó abban, ahogy én kértem.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Nehezen hozok döntéseket, ami korábban nem volt jellemző rám.',
+      en: 'I find it harder to make decisions than I used to.',
+    },
+    dimension: 'cognitive',
   },
   {
     id: 14,
-    dimensionId: 'psychological_safety',
-    text: 'Milyen gyakran beszélsz nyíltan a saját hibáidról a csapatod előtt?',
-    leftStatement: 'Soha – a vezető gyengeségeit nem kell közszemlére tenni',
-    rightStatement: 'Rendszeresen - mind hibázunk, beszélünk is róla.',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Munkám közben nehezen tartom fenn a fókuszomat.',
+      en: 'I struggle to maintain focus during work tasks.',
+    },
+    dimension: 'cognitive',
   },
+
+  // ─── TELJESÍTMÉNYÉRZET (4 kérdés — reversed!) ────────────────────────────
   {
     id: 15,
-    dimensionId: 'psychological_safety',
-    text: 'Egy csapattagod hibázott egy fontos projekten és maga jön el hozzád bevallani – még mielőtt te észrevetted volna.',
-    leftStatement: 'Jó, hogy szólt, de a hiba az hiba – ez nem mehet következmény nélkül.',
-    rightStatement: 'Szeretem az ilyet, megköszönöm, átnézzük, javítjuk.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Hatékonyan megoldom a munkámban felmerülő problémákat.',
+      en: 'I effectively deal with the problems that arise in my work.',
+    },
+    dimension: 'efficacy',
+    reversed: true,
   },
   {
     id: 16,
-    dimensionId: 'psychological_safety',
-    text: 'Hogyan kezeled, ha egy megbeszélésen két kollégád hevesen vitatkozik?',
-    leftStatement: 'Rövidre zárom helyettük és lépünk tovább.',
-    rightStatement: 'Facilitálom a helyzetet, elválasztom a személyeket és az ügyet',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Pozitívan befolyásolom mások életét a munkámon keresztül.',
+      en: 'I feel I am positively influencing other people\'s lives through my work.',
+    },
+    dimension: 'efficacy',
+    reversed: true,
   },
-
-  // ADAPTÍV DÖNTÉSHOZATAL (17-20)
   {
     id: 17,
-    dimensionId: 'adaptive_decision',
-    text: 'Egy fontos döntésnél ellentmondásos adataid vannak...',
-    leftStatement: 'Várok, amíg teljesen tisztán látom a képet',
-    rightStatement: "Hozok egy 'elég jó' döntést és majd folyamatosan alakítjuk még az irányt",
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Könnyen megteremtem a nyugodt légkört a csapatommal.',
+      en: 'I can easily create a relaxed atmosphere with the people I work with.',
+    },
+    dimension: 'efficacy',
+    reversed: true,
   },
   {
     id: 18,
-    dimensionId: 'adaptive_decision',
-    text: 'Olyan területen kell döntened, ahol a csapatodnak több tapasztalata van, mint neked.',
-    leftStatement: 'Én döntök – a felelősség az enyém',
-    rightStatement: 'Hagyom, hogy meghozzák a döntést',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Energikusnak érzem magam a munkámban.',
+      en: 'I feel energized and accomplished when I finish work.',
+    },
+    dimension: 'efficacy',
+    reversed: true,
   },
+
+  // ─── SZOMATIKUS JELZÉSEK (4 kérdés) ──────────────────────────────────────
   {
     id: 19,
-    dimensionId: 'adaptive_decision',
-    text: 'Visszavontál-e nyilvánosan egy korábbi döntésedet, új információ hatására?',
-    leftStatement: 'Nem, a következetesség nekem fontosabb.',
-    rightStatement: 'Igen, rendszeresen korrigálok, ha kell.',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Fejfájással, izomfeszüléssel ébredek.',
+      en: 'I wake up with headaches or muscle tension.',
+    },
+    dimension: 'somatic',
   },
   {
     id: 20,
-    dimensionId: 'adaptive_decision',
-    text: 'Szoktál valakit megkérni, hogy döntés előtt kérdőjelezze meg az elképzelésedet?',
-    leftStatement: 'Nem, majd utólag kiderül, ha tévedtem',
-    rightStatement: 'Igen, keresem a kritikus hangokat, mielőtt döntök',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Alvási problémáim vannak (nehezen alszom el vagy éjjel felébredek).',
+      en: 'I have trouble sleeping (falling asleep or staying asleep).',
+    },
+    dimension: 'somatic',
   },
-
-  // CSOPORTKULTÚRA-TUDATOSSÁG (21-24)
   {
     id: 21,
-    dimensionId: 'group_culture_awareness',
-    text: 'Hogyan jellemeznéd a csapatod jelenlegi működési kultúráját?',
-    leftStatement: 'Nem értem, miért kellene ezen gondolkodni',
-    rightStatement: 'Tudom, milyen kultúrát építünk a csapatban és miért',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Testi tüneteket (pl. hasi görcs, szívdobogás) tapasztalok munkával kapcsolatos stressz esetén.',
+      en: 'I experience physical symptoms (e.g. stomach ache, palpitations) when stressed at work.',
+    },
+    dimension: 'somatic',
   },
   {
     id: 22,
-    dimensionId: 'group_culture_awareness',
-    text: 'Észreveszed, ha a csapatodban valami a felszín alatt feszül?',
-    leftStatement: 'Ha nem mondják el, nem az én dolgom kitalálni',
-    rightStatement: 'Tudom olvasni a jeleket és proaktívan foglalkozom velük',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
-  },
-  {
-    id: 23,
-    dimensionId: 'group_culture_awareness',
-    text: 'Egy új projekt indul. A csapatod egyik fele szoros együttműködést akar, a másik fele önálló munkát...',
-    leftStatement: 'Megmondom, hogyan fogunk dolgozni – a vezető dönt',
-    rightStatement: 'Felmérem, melyik mód illik a feladathoz',
-    isReversed: true,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
-  },
-  {
-    id: 24,
-    dimensionId: 'group_culture_awareness',
-    text: 'Volt már, hogy ugyanazt a csapatot teljesen másképp kellett vezetned, mint ahogy előző hónapban még tetted?',
-    leftStatement: 'Nem, én ugyanolyan vagyok mindig, mindenkivel, minden helyzetben.',
-    rightStatement: 'Igen, figyelek rá, hogy mikor, kit, hogyan vezessek ahhoz, hogy neki és a helyzetnek a legjobb legyen.',
-    isReversed: false,
-    answers: [
-      { text: '', score: 5 },
-      { text: '', score: 4 },
-      { text: '', score: 3 },
-      { text: '', score: 2 },
-      { text: '', score: 1 },
-    ],
+    text: {
+      hu: 'Az elmúlt időszakban betegséggel töltött napjaim száma nőtt.',
+      en: 'The number of sick days I have taken has increased recently.',
+    },
+    dimension: 'somatic',
   },
 ];
+
+export const DIMENSIONS: Record<
+  BurnoutQuestion['dimension'],
+  { label: { hu: string; en: string }; emoji: string; color: string }
+> = {
+  emotional: {
+    label: { hu: 'Érzelmi Kimerültség', en: 'Emotional Exhaustion' },
+    emoji: '💔',
+    color: '#ef4444',
+  },
+  detachment: {
+    label: { hu: 'Mentális Distancia', en: 'Mental Detachment' },
+    emoji: '🌫️',
+    color: '#8b5cf6',
+  },
+  cognitive: {
+    label: { hu: 'Kognitív Terhelés', en: 'Cognitive Impairment' },
+    emoji: '🧠',
+    color: '#f97316',
+  },
+  efficacy: {
+    label: { hu: 'Teljesítményérzet', en: 'Personal Efficacy' },
+    emoji: '⚡',
+    color: '#3b82f6',
+  },
+  somatic: {
+    label: { hu: 'Testi Jelzések', en: 'Physical Signals' },
+    emoji: '😴',
+    color: '#10b981',
+  },
+};

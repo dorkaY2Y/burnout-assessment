@@ -1,112 +1,151 @@
-import { dimensions } from '../data/dimensions';
+import { QUESTIONS } from '../data/questions';
 
-export interface DimensionScore {
-  dimensionId: string;
-  name: string;
-  icon: string;
-  color: string;
-  score: number;
-  level: string;
-  levelColor: string;
+export interface BurnoutResult {
+  overall: number;       // 0-100 (magasabb = nagyobb burnout kockázat)
+  emotional: number;
+  detachment: number;
+  cognitive: number;
+  efficacy: number;      // reversed: magasabb = alacsonyabb hatékonyság (=nagyobb burnout)
+  somatic: number;
+  profile: BurnoutProfile;
+  riskLevel: RiskLevel;
 }
 
-export interface ProfileResult {
-  overallScore: number;
-  profileName: string;
-  profileEmoji: string;
-  profileDescription: string;
-  dimensionScores: DimensionScore[];
-}
+export type RiskLevel = 'low' | 'moderate' | 'high' | 'crisis';
 
-function getDimensionLevel(score: number): { level: string; levelColor: string } {
-  if (score >= 4.2) return { level: 'Erősséged', levelColor: '#10B981' };
-  if (score >= 3.4) return { level: 'Jó úton jársz', levelColor: '#3B82F6' };
-  if (score >= 2.6) return { level: 'Figyelj rá', levelColor: '#ded114' };
-  return { level: 'Javasolt fókuszterület', levelColor: '#F59E0B' };
-}
+export type BurnoutProfile =
+  | 'balanced'           // Alacsony mindenben
+  | 'at_risk'            // Enyhe jelzések
+  | 'exhausted'          // Fizikai + érzelmi domináns
+  | 'detached'           // Mentális distancia + cinizmus
+  | 'lost_leader'        // Hatékonyság + értelem hiány
+  | 'burned_hero';       // Magas teljesítmény + alacsony jutalom (legveszélyesebb)
 
-function getProfile(score: number): { name: string; emoji: string; description: string } {
-  if (score >= 4.2) {
-    return {
-      name: 'Adaptív Vezető',
-      emoji: '🚀',
-      description: 'Nagyon erős alapokon állsz — rugalmasan navigálsz a változásban, és magabiztosan vezeted a csapatod. Tartsd ezt az irányt!',
-    };
-  }
-  if (score >= 3.4) {
-    return {
-      name: 'Tudatos Stratéga',
-      emoji: '📈',
-      description: 'Szilárd alapjaid vannak, és van benned nyitottság a fejlődésre. Több helyen kiemelkedő vagy — érdemes azokra építened, ahol még van mozgástér.',
-    };
-  }
-  if (score >= 2.6) {
-    return {
-      name: 'Stabil Alapozó',
-      emoji: '🏗️',
-      description: 'Kipróbált módszerekre építesz, ami sok helyzetben jól működik. Az alábbiakban megmutatjuk, hol érdemes új irányokat kipróbálnod.',
-    };
-  }
-  return {
-    name: 'Útkereső Vezető',
-    emoji: '🧭',
-    description: 'Most van a legjobb időpont elkezdeni — és az, hogy itt vagy, már önmagában sokat elárul a nyitottságodról. Nézd meg, mivel érdemes kezdened.',
+export function calculateResults(answers: Record<number, number>): BurnoutResult {
+  const dimScores: Record<string, number[]> = {
+    emotional: [], detachment: [], cognitive: [], efficacy: [], somatic: []
   };
-}
 
-export function calculateResults(answers: Record<number, number>): ProfileResult {
-  const dimensionScoresMap: Record<string, number[]> = {};
-
-  for (const dim of dimensions) {
-    dimensionScoresMap[dim.id] = [];
+  for (const q of QUESTIONS) {
+    const raw = answers[q.id];
+    if (raw === undefined) continue;
+    // 1-5 → 0-100 (reversed: 5=low burnout → flip)
+    const normalized = q.reversed ? (6 - raw - 1) * 25 : (raw - 1) * 25;
+    dimScores[q.dimension].push(normalized);
   }
 
-  for (const [questionId, score] of Object.entries(answers)) {
-    const qId = Number(questionId);
-    const dimIndex = Math.floor((qId - 1) / 4);
-    const dim = dimensions[dimIndex];
-    if (dim) {
-      dimensionScoresMap[dim.id].push(score);
-    }
-  }
+  const avg = (arr: number[]) =>
+    arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
 
-  const dimensionScores: DimensionScore[] = dimensions.map((dim) => {
-    const scores = dimensionScoresMap[dim.id];
-    const avg = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-    const roundedAvg = Math.round(avg * 100) / 100;
-    const { level, levelColor } = getDimensionLevel(roundedAvg);
-    return {
-      dimensionId: dim.id,
-      name: dim.name,
-      icon: dim.icon,
-      color: dim.color,
-      score: roundedAvg,
-      level,
-      levelColor,
-    };
-  });
+  const emotional = avg(dimScores.emotional);
+  const detachment = avg(dimScores.detachment);
+  const cognitive = avg(dimScores.cognitive);
+  const efficacy = avg(dimScores.efficacy);
+  const somatic = avg(dimScores.somatic);
+  const overall = avg([emotional, detachment, cognitive, efficacy, somatic]);
 
-  const overallScore =
-    Math.round(
-      (dimensionScores.reduce((sum, d) => sum + d.score, 0) / dimensionScores.length) * 100
-    ) / 100;
+  const riskLevel = getRiskLevel(overall);
+  const profile = determineProfile(overall, emotional, detachment, cognitive, efficacy, somatic);
 
-  const profile = getProfile(overallScore);
-
-  return {
-    overallScore,
-    profileName: profile.name,
-    profileEmoji: profile.emoji,
-    profileDescription: profile.description,
-    dimensionScores,
-  };
+  return { overall, emotional, detachment, cognitive, efficacy, somatic, profile, riskLevel };
 }
 
-export function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
+function getRiskLevel(overall: number): RiskLevel {
+  if (overall < 30) return 'low';
+  if (overall < 55) return 'moderate';
+  if (overall < 75) return 'high';
+  return 'crisis';
 }
+
+function determineProfile(
+  overall: number,
+  emotional: number,
+  detachment: number,
+  cognitive: number,
+  efficacy: number,
+  somatic: number
+): BurnoutProfile {
+  if (overall < 30) return 'balanced';
+  if (overall < 45) return 'at_risk';
+  if (somatic > 65 && emotional > 65) return 'exhausted';
+  if (detachment > 65 && cognitive > 55) return 'detached';
+  if (efficacy > 65 && overall > 55) return 'lost_leader';
+  return 'burned_hero';
+}
+
+export const RISK_INFO: Record<RiskLevel, { label: { hu: string; en: string }; color: string; emoji: string }> = {
+  low: {
+    emoji: '🟢',
+    color: '#10b981',
+    label: { hu: 'Kiegyensúlyozott', en: 'Balanced' },
+  },
+  moderate: {
+    emoji: '🟡',
+    color: '#f59e0b',
+    label: { hu: 'Figyelj oda magadra', en: 'Worth watching' },
+  },
+  high: {
+    emoji: '🔴',
+    color: '#ef4444',
+    label: { hu: 'Aktív burnout jelzések', en: 'Active burnout signals' },
+  },
+  crisis: {
+    emoji: '⚫',
+    color: '#6b7280',
+    label: { hu: 'Krízis — azonnal cselekedj', en: 'Crisis — act now' },
+  },
+};
+
+export const PROFILE_INFO: Record<
+  BurnoutProfile,
+  { title: { hu: string; en: string }; desc: { hu: string; en: string }; emoji: string }
+> = {
+  balanced: {
+    emoji: '🌱',
+    title: { hu: 'Kiegyensúlyozott', en: 'Balanced' },
+    desc: {
+      hu: 'Alacsony burnout kockázat. Tarts fenn rendszeres önreflexiót és preventív szokásokat!',
+      en: 'Low burnout risk. Keep up regular self-reflection and preventive habits.',
+    },
+  },
+  at_risk: {
+    emoji: '⚠️',
+    title: { hu: 'Figyelj oda magadra', en: 'Watch yourself' },
+    desc: {
+      hu: 'Enyhe jelzések több dimenzióban. Érdemes preventív lépéseket tenni, mielőtt fokozódnak.',
+      en: 'Mild signals across dimensions. Worth taking preventive steps before they escalate.',
+    },
+  },
+  exhausted: {
+    emoji: '😴',
+    title: { hu: 'Kimerült Szervező', en: 'Exhausted Organizer' },
+    desc: {
+      hu: 'Fizikai és érzelmi kimerülés dominál. Prioritás: valódi pihenés, határok és regeneráció.',
+      en: 'Physical and emotional exhaustion dominant. Priority: real rest, boundaries, and recovery.',
+    },
+  },
+  detached: {
+    emoji: '🫧',
+    title: { hu: 'Elszigetelt Szakértő', en: 'Detached Expert' },
+    desc: {
+      hu: 'Mentális distancia és cinizmus. Emberi kapcsolatokra és értelemre van szükséged.',
+      en: 'Mental detachment and cynicism. You need human connection and renewed sense of meaning.',
+    },
+  },
+  lost_leader: {
+    emoji: '🌫️',
+    title: { hu: 'Elveszett Vezető', en: 'Lost Leader' },
+    desc: {
+      hu: 'Hatékonyság és értelem hiánya. Célok és értékek újradefinálása szükséges.',
+      en: 'Loss of efficacy and meaning. Goals and values need redefining.',
+    },
+  },
+  burned_hero: {
+    emoji: '🔥',
+    title: { hu: 'Kiégett Hős', en: 'Burned-out Hero' },
+    desc: {
+      hu: 'Magas teljesítmény, alacsony jutalom. A legveszélyesebb minta — azonnal cselekedj.',
+      en: 'High performance, low reward. The most dangerous pattern — act immediately.',
+    },
+  },
+};

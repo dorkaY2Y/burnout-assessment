@@ -1,0 +1,665 @@
+/* ============================================================
+   Y2Y Leadership Readiness Index - Styles
+   ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f172a;
+  color: #f1f5f9;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   Intro Section
+   ============================================================ */
+
+.intro-container {
+  max-width: 800px;
+  text-align: center;
+}
+
+.intro-header {
+  margin-bottom: 60px;
+}
+
+.intro-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.intro-title-main {
+  display: block;
+  font-size: 64px;
+  margin-bottom: 8px;
+}
+
+.intro-title-sub {
+  display: block;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.intro-subtitle {
+  font-size: 18px;
+  color: #94a3b8;
+  margin-bottom: 40px;
+}
+
+.intro-content {
+  text-align: left;
+}
+
+.intro-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.intro-section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #f1f5f9;
+}
+
+.intro-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #94a3b8;
+}
+
+.intro-dimensions {
+  margin-bottom: 40px;
+}
+
+.dimensions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.dimension-card {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.dimension-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.dimension-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: pre-line;
+}
+
+.intro-start-btn {
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 auto;
+  display: block;
+}
+
+.intro-start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(45, 91, 255, 0.3);
+}
+
+/* ============================================================
+   Quiz Section
+   ============================================================ */
+
+.quiz-container {
+  max-width: 800px;
+  width: 100%;
+}
+
+.quiz-header {
+  margin-bottom: 40px;
+}
+
+.quiz-progress {
+  margin-bottom: 24px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.dimension-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+}
+
+.quiz-content {
+  text-align: center;
+}
+
+.question-container {
+  margin-bottom: 40px;
+}
+
+.question-text {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #f1f5f9;
+  margin-bottom: 32px;
+}
+
+.answers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.answer-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  padding: 20px 24px;
+  font-size: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.answer-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.answer-btn.selected {
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  border-color: transparent;
+  color: white;
+}
+
+.answer-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.answer-text {
+  line-height: 1.5;
+}
+
+/* ============================================================
+   Result Section
+   ============================================================ */
+
+.result-container {
+  max-width: 800px;
+  text-align: center;
+}
+
+.result-header {
+  margin-bottom: 40px;
+}
+
+.result-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.result-subtitle {
+  font-size: 24px;
+  color: #94a3b8;
+}
+
+.result-content {
+  text-align: left;
+}
+
+.overall-score {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.score-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+}
+
+.score-max {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.dimensions-results {
+  margin-bottom: 40px;
+}
+
+.dimension-result {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dimension-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.dimension-icon {
+  font-size: 24px;
+}
+
+.dimension-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.score-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 16px;
+}
+
+.score-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.score-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f1f5f9;
+  min-width: 40px;
+  text-align: right;
+}
+
+.result-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.restart-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f1f5f9;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.restart-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.email-btn {
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.email-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(45, 91, 255, 0.3);
+}
+
+/* ============================================================
+   Email Section
+   ============================================================ */
+
+.email-container {
+  max-width: 600px;
+  text-align: center;
+}
+
+.email-header {
+  margin-bottom: 40px;
+}
+
+.email-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.email-subtitle {
+  font-size: 18px;
+  color: #94a3b8;
+}
+
+.email-content {
+  text-align: left;
+}
+
+.email-summary {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.summary-value {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.summary-max {
+  font-size: 20px;
+  color: #94a3b8;
+}
+
+.summary-text {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.email-form {
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.email-input {
+  flex: 1;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #f1f5f9;
+  font-size: 16px;
+  outline: none;
+}
+
+.email-input::placeholder {
+  color: #94a3b8;
+}
+
+.email-input:focus {
+  border-color: #2d5bff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #2d5bff 0%, #00c2a8 100%);
+  color: white;
+  border: none;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(45, 91, 255, 0.3);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.email-note {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-top: 16px;
+}
+
+.email-success {
+  text-align: center;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.email-success h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 12px;
+}
+
+.email-success p {
+  font-size: 16px;
+  color: #94a3b8;
+  margin-bottom: 24px;
+}
+
+/* ============================================================
+   Responsive Design
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .app-container {
+    padding: 16px;
+  }
+  
+  .intro-title {
+    font-size: 36px;
+  }
+  
+  .intro-title-main {
+    font-size: 48px;
+  }
+  
+  .intro-title-sub {
+    font-size: 24px;
+  }
+  
+  .dimensions-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  
+  .question-text {
+    font-size: 20px;
+  }
+  
+  .answer-btn {
+    padding: 16px 20px;
+    font-size: 14px;
+  }
+  
+  .result-title {
+    font-size: 36px;
+  }
+  
+  .result-subtitle {
+    font-size: 20px;
+  }
+  
+  .dimension-header {
+    min-width: 150px;
+  }
+  
+  .form-group {
+    flex-direction: column;
+  }
+  
+  .submit-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro-title {
+    font-size: 28px;
+  }
+  
+  .intro-title-main {
+    font-size: 36px;
+  }
+  
+  .intro-title-sub {
+    font-size: 20px;
+  }
+  
+  .dimensions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .question-text {
+    font-size: 18px;
+  }
+  
+  .answer-btn {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  
+  .result-actions {
+    flex-direction: column;
+  }
+  
+  .restart-btn,
+  .email-btn {
+    width: 100%;
+  }
+}

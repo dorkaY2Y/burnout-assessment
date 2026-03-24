@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://burnout.y2y.hu/sitemap.xml

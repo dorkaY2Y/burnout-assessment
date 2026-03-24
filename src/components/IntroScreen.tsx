@@ -1,103 +1,126 @@
+import { Language } from '../data/questions';
+
 interface IntroScreenProps {
   onStart: () => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
 }
 
-export default function IntroScreen({ onStart }: IntroScreenProps) {
+const COPY = {
+  hu: {
+    brand: 'Burnout Compass',
+    tagline: 'Nem kell megvárnod, amíg a szervezeted szól.',
+    taglineBold: 'Megmutatjuk, hol tartasz most.',
+    intro1: 'A Y2Y Burnout Compass két validált tudományos skála — az MBI és a BAT — alapján mutatja meg, milyen burnout-mintázatban vagy. 22 kérdés, 5 dimenzió, ~8 perc.',
+    intro2: 'Az eredményeid biztonságban vannak. Csak akkor van értelme kitöltened, ha őszinte vagy magaddal.',
+    q: '22 kérdés',
+    d: '5 dimenzió',
+    m: '~8 perc',
+    cta: 'Kezdjük el',
+    sub: 'Nincsenek jó vagy rossz válaszok.',
+    sciTitle: 'Tudományos alapok',
+    sciDesc: 'Két validált, nyílt forrású eszköz kombinációja:',
+    s1title: 'MBI — Maslach Burnout Inventory',
+    s1ref: 'Maslach & Jackson, 1981',
+    s2title: 'BAT — Burnout Assessment Tool',
+    s2ref: 'Leiter & Maslach, 2021',
+    changeLang: 'English',
+  },
+  en: {
+    brand: 'Burnout Compass',
+    tagline: "Don't wait until your body tells you.",
+    taglineBold: 'See where you stand — right now.',
+    intro1: 'The Y2Y Burnout Compass combines two validated scientific scales — MBI and BAT — to reveal your burnout pattern. 22 questions, 5 dimensions, ~8 minutes.',
+    intro2: 'Your results are safe. This only makes sense if you are honest with yourself.',
+    q: '22 questions',
+    d: '5 dimensions',
+    m: '~8 min',
+    cta: "Let's start",
+    sub: 'There are no right or wrong answers.',
+    sciTitle: 'Scientific Foundation',
+    sciDesc: 'A combination of two validated, open-source tools:',
+    s1title: 'MBI — Maslach Burnout Inventory',
+    s1ref: 'Maslach & Jackson, 1981',
+    s2title: 'BAT — Burnout Assessment Tool',
+    s2ref: 'Leiter & Maslach, 2021',
+    changeLang: 'Magyar',
+  },
+};
+
+export default function IntroScreen({ onStart, language, setLanguage }: IntroScreenProps) {
+  const t = COPY[language];
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-5 py-10 relative z-10">
       <div className="max-w-lg w-full text-center animate-fade-up">
+        {/* Language toggle */}
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={() => setLanguage(language === 'hu' ? 'en' : 'hu')}
+            className="text-xs text-gray-500 hover:text-gray-300 border border-gray-700 rounded-lg px-3 py-1.5 transition-colors"
+          >
+            {t.changeLang}
+          </button>
+        </div>
+
         {/* Branding */}
         <div className="mb-8">
-          <h1 className="text-6xl sm:text-7xl font-black tracking-tighter mb-2" style={{ color: '#ded114' }}>
-            Ground
+          <div className="text-5xl mb-3">🔥</div>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter mb-2 text-white">
+            {t.brand}
           </h1>
-          <p className="text-xs text-ground-muted font-medium tracking-[0.3em] uppercase">
+          <p className="text-xs text-gray-500 font-medium tracking-[0.3em] uppercase">
             by Y2Y
           </p>
         </div>
 
         {/* Tagline */}
-        <p className="text-xl sm:text-2xl text-ground-text/90 font-light leading-tight mb-6">
-          Nem ígérjük, hogy jövőbiztos leszel.
+        <p className="text-xl sm:text-2xl text-gray-300 font-light leading-tight mb-6">
+          {t.tagline}
           <br />
-          <span className="font-bold text-white tracking-tight">Megmutatjuk, hol állsz most.</span>
+          <span className="font-bold text-white tracking-tight">{t.taglineBold}</span>
         </p>
 
-        {/* Self-assessment philosophy */}
+        {/* Description */}
         <div className="mb-8 max-w-lg mx-auto">
-          <p className="text-base text-ground-text/85 font-light leading-relaxed mb-4">
-            Sokan kértétek, hogy legyen egy egyszerű self-assessment, amihez magatokat méritek. 
-            Titeket nem érdekel a benchmark — csak egyszerűen szeretnétek <span className="font-semibold text-white">magatokat megmérni</span>.
-          </p>
-          <p className="text-sm text-ground-muted/80 font-light leading-relaxed">
-            Az eredményeidet nem tároljuk és nem nézzük meg — csak akkor van értelme kitöltened, ha őszinte vagy magaddal.
-          </p>
+          <p className="text-base text-gray-400 font-light leading-relaxed mb-4">{t.intro1}</p>
+          <p className="text-sm text-gray-500 font-light leading-relaxed">{t.intro2}</p>
         </div>
 
-        {/* Stats line */}
-        <div className="flex items-center justify-center gap-6 sm:gap-8 mb-8 text-ground-muted text-sm font-medium">
-          <span><span className="font-mono font-bold text-lg" style={{ color: '#ded114' }}>24</span> kérdés</span>
-          <span className="text-ground-border/50">·</span>
-          <span><span className="font-mono font-bold text-lg" style={{ color: '#ded114' }}>6</span> dimenzió</span>
-          <span className="text-ground-border/50">·</span>
-          <span><span className="font-mono font-bold text-lg" style={{ color: '#ded114' }}>~6</span> perc</span>
+        {/* Stats */}
+        <div className="flex items-center justify-center gap-6 sm:gap-8 mb-8 text-gray-500 text-sm font-medium">
+          <span><span className="font-mono font-bold text-lg text-red-400">22</span> {t.q}</span>
+          <span className="text-gray-700">·</span>
+          <span><span className="font-mono font-bold text-lg text-red-400">5</span> {t.d}</span>
+          <span className="text-gray-700">·</span>
+          <span><span className="font-mono font-bold text-lg text-red-400">{t.m}</span></span>
         </div>
 
         {/* CTA */}
         <button
           onClick={onStart}
-          className="group inline-flex items-center gap-2.5 px-10 py-4 rounded-xl font-bold text-base tracking-tight transition-all duration-200 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
-          style={{ backgroundColor: '#ded114', color: '#0B1120' }}
+          className="group inline-flex items-center gap-2.5 px-10 py-4 rounded-xl font-bold text-base tracking-tight transition-all duration-200 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] shadow-lg bg-red-500 text-white"
         >
-          Kezdjük el
+          {t.cta}
           <span className="transition-transform duration-200 group-hover:translate-x-1 font-normal text-lg">→</span>
         </button>
 
-        {/* Sub-note */}
-        <p className="mt-5 text-sm text-ground-muted/60 font-light">
-          Nincsenek jó vagy rossz válaszok.
-        </p>
+        <p className="mt-5 text-sm text-gray-600 font-light">{t.sub}</p>
 
         {/* Scientific foundation */}
-        <div className="mt-16 pt-10 border-t border-ground-border/30">
-          <p className="text-xs text-ground-muted/70 font-semibold uppercase tracking-[0.2em] mb-5">
-            Tudományos alapok
+        <div className="mt-16 pt-10 border-t border-gray-800">
+          <p className="text-xs text-gray-600 font-semibold uppercase tracking-[0.2em] mb-4">
+            {t.sciTitle}
           </p>
-          <p className="text-base text-ground-text/75 font-light leading-relaxed mb-6 max-w-lg mx-auto">
-            Az elmúlt 10 évben ezekre a modellekre hivatkoztunk a legtöbbet — ezek alapján dolgoztuk ki a kérdéseket:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto text-left">
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">SCARF modell</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Rock, 2008</p>
+          <p className="text-sm text-gray-500 font-light mb-5">{t.sciDesc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto text-left">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-gray-700 transition-colors">
+              <p className="text-sm font-semibold text-white mb-1">{t.s1title}</p>
+              <p className="text-xs text-gray-500 font-mono">{t.s1ref}</p>
             </div>
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">Pszichológiai Biztonság</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Edmondson, 1999</p>
-            </div>
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">Dual-Process Theory</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Kahneman, 2011</p>
-            </div>
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">Kognitív Flexibilitás</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Diamond, 2013</p>
-            </div>
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">Self-Determination Theory</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Deci & Ryan, 1985</p>
-            </div>
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">Growth Mindset</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Dweck, 2006</p>
-            </div>
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">Adaptive Leadership</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Heifetz & Linsky, 2002</p>
-            </div>
-            <div className="bg-ground-card/40 border border-ground-border/30 rounded-xl p-4 hover:border-ground-border/50 transition-colors">
-              <p className="text-sm font-semibold text-white mb-1 tracking-tight">Complexity Leadership</p>
-              <p className="text-xs text-ground-muted/80 font-mono">Uhl-Bien et al., 2007</p>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-gray-700 transition-colors">
+              <p className="text-sm font-semibold text-white mb-1">{t.s2title}</p>
+              <p className="text-xs text-gray-500 font-mono">{t.s2ref}</p>
             </div>
           </div>
         </div>

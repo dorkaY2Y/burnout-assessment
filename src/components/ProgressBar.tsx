@@ -1,37 +1,29 @@
-import { dimensions } from '../data/dimensions';
+import { DIMENSIONS } from '../data/questions';
 
 interface ProgressBarProps {
-  currentQuestion: number;
+  currentIndex: number;
   totalQuestions: number;
-  currentDimensionId: string;
+  currentDimension: string;
 }
 
-export default function ProgressBar({ currentQuestion, totalQuestions, currentDimensionId }: ProgressBarProps) {
-  const dimension = dimensions.find((d) => d.id === currentDimensionId);
-  const progress = ((currentQuestion) / totalQuestions) * 100;
+export default function ProgressBar({ currentIndex, totalQuestions, currentDimension }: ProgressBarProps) {
+  const progress = ((currentIndex) / totalQuestions) * 100;
+  const dim = DIMENSIONS[currentDimension as keyof typeof DIMENSIONS];
 
   return (
-    <div className="w-full mb-8">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm text-ground-muted font-space-mono">
-          {currentQuestion + 1} / {totalQuestions}
+    <div className="mb-6">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-xs font-medium" style={{ color: dim?.color || '#6b7280' }}>
+          {dim?.emoji} {dim?.label?.hu}
         </span>
-        {dimension && (
-          <span className="text-sm flex items-center gap-1.5" style={{ color: dimension.color }}>
-            <span>{dimension.icon}</span>
-            <span className="font-medium">{dimension.name}</span>
-          </span>
-        )}
+        <span className="text-xs text-gray-500 font-mono">
+          {currentIndex + 1} / {totalQuestions}
+        </span>
       </div>
-      <div className="w-full h-1.5 bg-ground-border rounded-full overflow-hidden">
+      <div className="w-full bg-gray-800 rounded-full h-1.5">
         <div
-          className="h-full rounded-full transition-all duration-500 ease-out"
-          style={{
-            width: `${progress}%`,
-            background: dimension
-              ? `linear-gradient(90deg, ${dimension.color}88, ${dimension.color})`
-              : 'linear-gradient(90deg, #ded114, #ded114)',
-          }}
+          className="h-1.5 rounded-full transition-all duration-500"
+          style={{ width: `${progress}%`, backgroundColor: dim?.color || '#6b7280' }}
         />
       </div>
     </div>

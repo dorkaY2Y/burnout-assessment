@@ -1,4 +1,12 @@
-# Ground by Y2Y — Vezetői Tudatossági Felmérés
+# Y2Y Burnout Assessment Tool
+
+> NTC feladat #5 — A ground.y2y.hu mintájára | 2026-03-20
+
+Burnout-felmérő eszköz szervezeteknek és vezetőknek. 30 kérdés, 4 dimenzió, ~8 perc.
+
+---
+
+# (Eredeti GROUND alap - módosítandó burnout-ra)
 
 Neuroscience-alapú vezetői tudatossági felmérés. 24 kérdés, 6 dimenzió, ~6 perc.
 

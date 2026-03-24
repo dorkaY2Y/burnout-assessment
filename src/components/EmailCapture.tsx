@@ -1,122 +1,81 @@
 import { useState } from 'react';
-import { saveLead, sendResultEmail } from '../lib/supabase';
-import { ProfileResult } from '../utils/scoring';
+import { Language } from '../data/questions';
 
 interface EmailCaptureProps {
-  result: ProfileResult;
-  rawAnswers: Record<number, number>;
-  onOpenPrivacy: () => void;
+  onSubmit: (email: string) => void;
+  onSkip: () => void;
+  language: Language;
 }
 
-export default function EmailCapture({ result, rawAnswers, onOpenPrivacy }: EmailCaptureProps) {
-  const [email, setEmail] = useState('');
-  const [gdprChecked, setGdprChecked] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+const COPY = {
+  hu: {
+    title: 'Kérd el az eredményedet emailben!',
+    subtitle: 'Elküldjük a részletes elemzést, amit bármikor visszanézhetsz.',
+    placeholder: 'email@cim.hu',
+    submit: 'Küldöm az eredményemet',
+    skip: 'Kihagyom',
+    privacy: 'Nem küldünk spamot. Bármikor leiratkozhatsz.',
+  },
+  en: {
+    title: 'Get your results by email!',
+    subtitle: "We'll send you the detailed analysis so you can revisit it anytime.",
+    placeholder: 'your@email.com',
+    submit: 'Send me my results',
+    skip: 'Skip',
+    privacy: "We won't spam you. Unsubscribe anytime.",
+  },
+};
 
-  const isValid = email.includes('@') && email.includes('.') && gdprChecked;
+export default function EmailCapture({ onSubmit, onSkip, language }: EmailCaptureProps) {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const t = COPY[language];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValid || loading) return;
-
+    if (!email.includes('@')) return;
     setLoading(true);
-    setError('');
-
-    const dimension_scores: Record<string, number> = {};
-    for (const d of result.dimensionScores) {
-      dimension_scores[d.dimensionId] = d.score;
-    }
-
-    await saveLead({
-      email,
-      overall_score: result.overallScore,
-      profile_name: result.profileName,
-      dimension_scores,
-      raw_answers: rawAnswers,
-    });
-
-    const emailSent = await sendResultEmail(email, result);
-    if (!emailSent) {
-      setError('Az email küldése nem sikerült, de az adataidat elmentettük. Hamarosan keresünk!');
-    }
-
-    setSubmitted(true);
-    setLoading(false);
+    // Supabase submit is handled in App.tsx via onSubmit callback
+    onSubmit(email);
   };
 
-  if (submitted) {
-    return (
-      <div className="text-center py-6 animate-fade-up">
-        <h3 className="text-base font-semibold text-white mb-1">Köszönjük!</h3>
-        <p className="text-ground-muted text-sm">
-          {error || 'A részletes riportod úton van — nézd meg az emailjeidet.'}
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="border rounded-lg p-5" style={{ borderColor: '#1E293B', backgroundColor: '#131B2E99' }}>
-        <h3 className="text-sm font-semibold text-white mb-1">
-          Kéred a részletes riportot?
-        </h3>
-        <p className="text-xs text-ground-muted mb-4 leading-relaxed">
-          Személyre szabott elemzés minden dimenzióról, konkrét javaslatokkal.
-        </p>
+    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-10">
+      <div className="max-w-md w-full text-center">
+        <div className="text-5xl mb-6">📬</div>
+        <h2 className="text-2xl font-bold text-white mb-3">{t.title}</h2>
+        <p className="text-gray-400 text-sm mb-8">{t.subtitle}</p>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="email@cimed.hu"
-            className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white placeholder-ground-muted/40 focus:outline-none transition-all"
-            style={{
-              backgroundColor: '#0B1120',
-              border: '1px solid #1E293B',
-            }}
-            onFocus={(e) => { e.currentTarget.style.borderColor = '#ded11450'; }}
-            onBlur={(e) => { e.currentTarget.style.borderColor = '#1E293B'; }}
+            placeholder={t.placeholder}
+            required
+            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-red-500 transition-colors"
           />
-
-          <label className="flex items-start gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={gdprChecked}
-              onChange={(e) => setGdprChecked(e.target.checked)}
-              className="mt-0.5 w-3.5 h-3.5 rounded cursor-pointer accent-[#ded114]"
-            />
-            <span className="text-[11px] text-ground-muted leading-relaxed">
-              Elfogadom az{' '}
-              <button
-                type="button"
-                onClick={onOpenPrivacy}
-                className="underline hover:text-white transition-colors"
-              >
-                adatkezelési tájékoztatót
-              </button>
-            </span>
-          </label>
-
           <button
             type="submit"
-            disabled={!isValid || loading}
-            className="w-full py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:brightness-110 active:scale-[0.99]"
-            style={{
-              backgroundColor: isValid ? '#ded114' : '#1E293B',
-              color: isValid ? '#0B1120' : '#475569',
-            }}
+            disabled={loading || !email.includes('@')}
+            className={`w-full py-4 rounded-xl font-bold text-base tracking-tight transition-all duration-200 ${
+              email.includes('@') && !loading
+                ? 'bg-red-500 text-white hover:brightness-110 hover:scale-[1.01]'
+                : 'bg-gray-800 text-gray-600 cursor-not-allowed'
+            }`}
           >
-            {loading ? 'Küldöm...' : 'Küldés'}
+            {loading ? '...' : t.submit}
           </button>
         </form>
 
-        <p className="mt-3 text-[10px] text-ground-muted/40 text-center leading-relaxed">
-          A riporton kívül alkalmanként küldünk hasznos tartalmakat vezetői fejlődésről — keveset és csak hasznosat. Bármikor leiratkozhatsz.
-        </p>
+        <button
+          onClick={onSkip}
+          className="mt-4 text-sm text-gray-600 hover:text-gray-400 transition-colors"
+        >
+          {t.skip}
+        </button>
+
+        <p className="mt-6 text-xs text-gray-700">{t.privacy}</p>
       </div>
     </div>
   );

@@ -1,170 +1,142 @@
-import { useState, useEffect } from 'react';
-import { questions } from '../data/questions';
-import { dimensions } from '../data/dimensions';
+import { useState } from 'react';
+import { QUESTIONS, DIMENSIONS, Language } from '../data/questions';
 import ProgressBar from './ProgressBar';
 
 interface QuizScreenProps {
   onComplete: (answers: Record<number, number>) => void;
+  language: Language;
 }
 
-export default function QuizScreen({ onComplete }: QuizScreenProps) {
+const SCALE_LABELS = {
+  hu: ['Soha', 'Ritkán', 'Néha', 'Gyakran', 'Mindig'],
+  en: ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'],
+};
+
+export default function QuizScreen({ onComplete, language }: QuizScreenProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [sliderValue, setSliderValue] = useState<number>(3);
-  const [animState, setAnimState] = useState<'in' | 'out'>('in');
-  const [prevDimensionId, setPrevDimensionId] = useState<string | null>(null);
-  const [showDimensionIntro, setShowDimensionIntro] = useState(true);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [animating, setAnimating] = useState(false);
 
-  const currentQuestion = questions[currentIndex];
-  const currentDimension = dimensions.find((d) => d.id === currentQuestion.dimensionId);
+  const q = QUESTIONS[currentIndex];
+  const labels = SCALE_LABELS[language];
 
-  useEffect(() => {
-    if (prevDimensionId !== currentQuestion.dimensionId) {
-      setShowDimensionIntro(true);
-      const timer = setTimeout(() => setShowDimensionIntro(false), 2500);
-      setPrevDimensionId(currentQuestion.dimensionId);
-      return () => clearTimeout(timer);
-    }
-  }, [currentIndex, currentQuestion.dimensionId, prevDimensionId]);
-
-  useEffect(() => {
-    // Reset slider to previous answer or default to 3
-    setSliderValue(answers[currentQuestion.id] ?? 3);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
+  const handleSelect = (value: number) => {
+    setSelected(value);
+  };
 
   const handleNext = () => {
-    const newAnswers = { ...answers, [currentQuestion.id]: sliderValue };
+    if (selected === null) return;
+    const newAnswers = { ...answers, [q.id]: selected };
     setAnswers(newAnswers);
 
-    if (currentIndex < questions.length - 1) {
-      setAnimState('out');
+    if (currentIndex < QUESTIONS.length - 1) {
+      setAnimating(true);
       setTimeout(() => {
-        setCurrentIndex((prev) => prev + 1);
-        setAnimState('in');
-      }, 300);
+        setCurrentIndex((i) => i + 1);
+        setSelected(null);
+        setAnimating(false);
+      }, 250);
     } else {
-      // Calculate scores (apply reversal) only at the end
-      const scores: Record<number, number> = {};
-      questions.forEach((q) => {
-        const val = newAnswers[q.id] ?? 3;
-        scores[q.id] = q.isReversed ? 6 - val : val;
-      });
-      onComplete(scores);
+      onComplete(newAnswers);
     }
   };
 
   const handleBack = () => {
-    if (currentIndex > 0) {
-      setAnimState('out');
-      setTimeout(() => {
-        setCurrentIndex((prev) => prev - 1);
-        setAnimState('in');
-      }, 300);
-    }
+    if (currentIndex === 0) return;
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrentIndex((i) => i - 1);
+      setSelected(answers[QUESTIONS[currentIndex - 1].id] ?? null);
+      setAnimating(false);
+    }, 200);
   };
 
+  const dim = DIMENSIONS[q.dimension];
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-8 relative z-10">
+    <div className="min-h-screen flex flex-col items-center justify-center px-5 py-8">
       <div className="max-w-lg w-full">
+        {/* Back button */}
         {currentIndex > 0 && (
           <button
             onClick={handleBack}
-            className="text-ground-muted hover:text-ground-text text-sm mb-3 transition-colors"
+            className="text-gray-500 hover:text-gray-300 text-sm mb-3 transition-colors"
           >
-            ← Vissza
+            ← {language === 'hu' ? 'Vissza' : 'Back'}
           </button>
         )}
 
         <ProgressBar
-          currentQuestion={currentIndex}
-          totalQuestions={questions.length}
-          currentDimensionId={currentQuestion.dimensionId}
+          currentIndex={currentIndex}
+          totalQuestions={QUESTIONS.length}
+          currentDimension={q.dimension}
         />
 
-        {/* Fixed height container for dimension badge to keep layout consistent */}
-        <div className="mb-5" style={{ minHeight: '44px' }}>
-          {showDimensionIntro && currentDimension && (
-            <div
-              className="py-2 px-3 rounded-lg border animate-fade-up flex items-center gap-2"
-              style={{
-                borderColor: `${currentDimension.color}25`,
-                backgroundColor: `${currentDimension.color}08`,
-              }}
-            >
-              <span className="text-sm font-semibold" style={{ color: currentDimension.color }}>
-                {currentDimension.name}
-              </span>
-            </div>
-          )}
+        {/* Dimension badge */}
+        <div className="mb-6" style={{ minHeight: '36px' }}>
+          <span
+            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border"
+            style={{ color: dim.color, borderColor: `${dim.color}30`, backgroundColor: `${dim.color}10` }}
+          >
+            {dim.emoji} {dim.label[language]}
+          </span>
         </div>
 
-        <div className={animState === 'in' ? 'animate-slide-in' : 'animate-slide-out'}>
-          {/* Question text - fixed height container */}
-          <div className="mb-8" style={{ minHeight: '120px' }}>
+        {/* Question */}
+        <div
+          className={`transition-all duration-250 ${animating ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}
+        >
+          <div className="mb-10" style={{ minHeight: '80px' }}>
             <h2 className="text-lg sm:text-xl font-semibold leading-relaxed text-white">
-              {currentQuestion.text}
+              {q.text[language]}
             </h2>
           </div>
 
-          {/* Usage instruction */}
-          <p className="text-xs text-ground-muted/70 text-center mb-6 italic">
-            Csúsztasd a csúszkát arra az állításra, amelyik jobban jellemez téged
-          </p>
-
-          {/* Forced-choice slider with opposing statements */}
+          {/* Likert scale */}
           <div className="mb-8">
-            {/* Endpoint statements - swap if reversed */}
-            <div className="flex justify-between gap-6 mb-6">
-              <div className="flex-1 text-left">
-                <p className="text-sm sm:text-base text-ground-text leading-relaxed">
-                  {currentQuestion.isReversed ? currentQuestion.rightStatement : currentQuestion.leftStatement}
-                </p>
-              </div>
-              <div className="flex-1 text-right">
-                <p className="text-sm sm:text-base text-ground-text leading-relaxed">
-                  {currentQuestion.isReversed ? currentQuestion.leftStatement : currentQuestion.rightStatement}
-                </p>
-              </div>
+            <div className="flex justify-between gap-2">
+              {[1, 2, 3, 4, 5].map((val) => (
+                <button
+                  key={val}
+                  onClick={() => handleSelect(val)}
+                  className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-xl border-2 transition-all duration-150 hover:scale-105 active:scale-95 ${
+                    selected === val
+                      ? 'border-current text-white scale-105'
+                      : 'border-gray-800 text-gray-600 hover:border-gray-600 hover:text-gray-400'
+                  }`}
+                  style={
+                    selected === val
+                      ? { borderColor: dim.color, backgroundColor: `${dim.color}15`, color: dim.color }
+                      : {}
+                  }
+                >
+                  <span className="text-lg font-bold">{val}</span>
+                  <span className="text-[10px] font-medium leading-tight text-center hidden sm:block">
+                    {labels[val - 1]}
+                  </span>
+                </button>
+              ))}
             </div>
-
-            {/* Slider */}
-            <div className="relative">
-              <input
-                type="range"
-                min="1"
-                max="5"
-                step="1"
-                value={sliderValue}
-                onChange={(e) => setSliderValue(Number(e.target.value))}
-                className="w-full h-2 rounded-lg appearance-none cursor-pointer slider-custom"
-                style={{
-                  background: `linear-gradient(to right, #ded114 0%, #ded114 ${((sliderValue - 1) / 4) * 100}%, #1E293B ${((sliderValue - 1) / 4) * 100}%, #1E293B 100%)`
-                }}
-              />
-              
-              {/* Tick marks */}
-              <div className="flex justify-between mt-2 px-0.5">
-                {[1, 2, 3, 4, 5].map((val) => (
-                  <div
-                    key={val}
-                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                      sliderValue >= val ? 'bg-y2y' : 'bg-ground-border'
-                    }`}
-                  />
-                ))}
-              </div>
+            <div className="flex justify-between mt-2 text-[10px] text-gray-600 sm:hidden">
+              <span>{labels[0]}</span>
+              <span>{labels[4]}</span>
             </div>
-
           </div>
 
           {/* Next button */}
           <button
             onClick={handleNext}
-            className="w-full py-4 rounded-xl font-bold text-base tracking-tight transition-all duration-200 hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] shadow-lg"
-            style={{ backgroundColor: '#ded114', color: '#0B1120' }}
+            disabled={selected === null}
+            className={`w-full py-4 rounded-xl font-bold text-base tracking-tight transition-all duration-200 ${
+              selected !== null
+                ? 'bg-red-500 text-white hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] shadow-lg'
+                : 'bg-gray-800 text-gray-600 cursor-not-allowed'
+            }`}
           >
-            {currentIndex < questions.length - 1 ? 'Következő' : 'Eredmény megtekintése'}
+            {currentIndex < QUESTIONS.length - 1
+              ? language === 'hu' ? 'Következő' : 'Next'
+              : language === 'hu' ? 'Eredmény megtekintése' : 'See results'}
           </button>
         </div>
       </div>
