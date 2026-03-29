@@ -1,12 +1,12 @@
-const { SESClient, SendEmailCommand } = require('@aws-sdk/client-ses');
+const { Resend } = require('resend');
+const { createClient } = require('@supabase/supabase-js');
 
-const sesClient = new SESClient({
-  region: process.env.SES_REGION || 'eu-west-1',
-  credentials: {
-    accessKeyId: process.env.SES_ACCESS_KEY,
-    secretAccessKey: process.env.SES_SECRET_KEY,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://xfqjqxkkvvcmjraibzfp.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmcWpxeGtrdnZjbWpyYWliemZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxODU5MDEsImV4cCI6MjA4Nzc2MTkwMX0.2BJyWckw75VV1T_ozB0GPOcf8aBPIQ0VVyGmzeUfmzM';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const getDimInsight = (dimension, score, lang) => {
   const level = score < 30 ? 'low' : score < 55 ? 'moderate' : score < 75 ? 'high' : 'crisis';
@@ -249,10 +249,13 @@ const generateEmailHTML = ({ profileTitle, profileDesc, profileEmoji, overall, r
         : 'Y2Y individual coaching programs are available in 13 languages, designed specifically for leaders. Not therapy — but a structured development process that shows the way forward.'
       }
     </div>
-    <a href="https://y2y.hu/coaching" style="display:inline-block;background:#ef4444;color:#ffffff;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
+    <a href="https://y2y.hu/kapcsolat" style="display:inline-block;background:#ef4444;color:#ffffff;font-size:14px;font-weight:700;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
       ${isHu ? 'Egyéni coaching konzultáció →' : isDe ? 'Individuelle Coaching-Beratung →' : 'Individual coaching consultation →'}
     </a>
-    <div style="margin-top:14px;font-size:11px;color:#475569;">
+    <div style="margin-top:12px;font-size:11px;color:#475569;">
+      ${isHu ? 'Nem küldünk spam-et.' : isDe ? 'Kein Spam.' : 'No spam.'}
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:#475569;">
       ${isHu ? '🌍 Magyar · English · Deutsch · és még 10 nyelv' : isDe ? '🌍 Deutsch · Magyar · English · und 10 weitere Sprachen' : '🌍 English · Magyar · Deutsch · and 10 more languages'}
     </div>
   </div>
@@ -348,6 +351,23 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Missing or invalid email address' });
   }
 
+  // Save to Supabase
+  try {
+    await supabase.from('burnout_results').insert({
+      email: to,
+      language: language || 'hu',
+      overall_score: Math.round(overall),
+      risk_level: riskLevel,
+      profile_title: profileTitle,
+      physical_score: dimensions?.find(d => d.id === 'physical')?.score,
+      emotional_score: dimensions?.find(d => d.id === 'emotional')?.score,
+      cognitive_score: dimensions?.find(d => d.id === 'cognitive')?.score,
+      team_score: dimensions?.find(d => d.id === 'team')?.score,
+    });
+  } catch (e) {
+    console.error('Supabase insert error (non-fatal):', e);
+  }
+
   const isHu = language === 'hu';
   const isDe = language === 'de';
   const subject = isHu
@@ -358,32 +378,28 @@ module.exports = async (req, res) => {
 
   const htmlContent = generateEmailHTML({ profileTitle, profileDesc, profileEmoji, overall, riskLevel, dimensions, language });
 
-  // Send result email to user
+  // Send result email to user via Resend
   try {
-    await sesClient.send(new SendEmailCommand({
-      Source: 'Y2Y Burnout Compass <dorka@y2y.hu>',
-      Destination: { ToAddresses: [to] },
-      ReplyToAddresses: ['dorka@y2y.hu'],
-      Message: {
-        Subject: { Data: subject, Charset: 'UTF-8' },
-        Body:    { Html: { Data: htmlContent, Charset: 'UTF-8' } },
-      },
-    }));
+    await resend.emails.send({
+      from: 'Y2Y Burnout Compass <dorka@y2y.hu>',
+      to: [to],
+      reply_to: 'dorka@y2y.hu',
+      subject,
+      html: htmlContent,
+    });
   } catch (err) {
-    console.error('SES send error:', err);
+    console.error('Resend send error:', err);
     return res.status(500).json({ error: 'Failed to send email', detail: err.message });
   }
 
   // Notification to dorka (best-effort)
   try {
-    await sesClient.send(new SendEmailCommand({
-      Source: 'Y2Y Burnout Compass <dorka@y2y.hu>',
-      Destination: { ToAddresses: ['dorka@y2y.hu'] },
-      Message: {
-        Subject: { Data: `Új Burnout Compass kitöltés: ${to}`, Charset: 'UTF-8' },
-        Body:    { Html: { Data: generateNotificationHTML({ to, profileTitle, overall, riskLevel, dimensions }), Charset: 'UTF-8' } },
-      },
-    }));
+    await resend.emails.send({
+      from: 'Y2Y Burnout Compass <dorka@y2y.hu>',
+      to: ['dorka@y2y.hu'],
+      subject: `Új Burnout Compass kitöltés: ${to}`,
+      html: generateNotificationHTML({ to, profileTitle, overall, riskLevel, dimensions }),
+    });
   } catch (err) {
     console.error('Notification email error (non-fatal):', err);
   }

@@ -163,7 +163,7 @@ export default function ResultScreen({ result, language, setLanguage, onRetake }
             {t.recommendations[result.riskLevel]}
           </p>
           <a
-            href="https://y2y.hu/coaching"
+            href="https://y2y.hu/kapcsolat"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:brightness-110"
@@ -171,6 +171,7 @@ export default function ResultScreen({ result, language, setLanguage, onRetake }
           >
             {t.cta} →
           </a>
+          <p className="mt-3 text-xs text-gray-600">Nem küldünk spam-et.</p>
         </div>
 
         {/* WHO note */}
